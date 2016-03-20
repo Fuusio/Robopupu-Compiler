@@ -2,7 +2,7 @@
 
 <img src="https://github.com/Fuusio/Robopupu/blob/master/images/robopupu_header_image.png" alt="robopupu mascot"/>
 
-An Android library that provides a set of annotation processors used for generating code for the **Robopupu APIs**:
+An Android library that provides a set of annotation processors used for generating code for the following **Robopupu APIs**:
 
 * **Robopupu.MVP**: A Model-View-Presenter (MVP) API.
 * **Robopupu.Dependency**: A dependency injection/pulling API.
@@ -12,25 +12,21 @@ An Android library that provides a set of annotation processors used for generat
 
 Robopupu APIs are used for architecting and developing Android applications. To minimize writing of boiler plate code, Robopupu utilises declarative annotations and annotation processors that generates code for using the libraries.
 
-Check out the [Robopupu project website](http://robopupu.com/) for further information.
+Check out the [Robopupu project website](http://robopupu.com/) and [Robopupu Github repository](https://github.com/Fuusio/Robopupu) for further information.
 
-## Status
-
-Robopupu is currently under active development.
 
 ## Documentation
 Robopupu documentation can be found in [Robopupu project website](http://robopupu.com/). 
 
 ## Installation
-
-TBD
+Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
 ## Changelog
-The changelog can be found in the [release section](https://github.com/Fuusio/Robopupu/releases)
+The current version is 0.3.0.
 
 ## License
 ```
-Copyright (C) 2008-2016 Marko Salmela
+Copyright (C) 2015-2016 Marko Salmela
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
