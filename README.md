@@ -2,7 +2,7 @@
 
 <img src="https://github.com/Fuusio/Robopupu/blob/master/images/robopupu_header_image.png" alt="robopupu mascot"/>
 
-An Android library that provides a set of annotation processors used for generating code for the **Robopupu APIs**:
+An Android library that provides a set of annotation processors used for generating code for the following **Robopupu APIs**:
 
 * **Robopupu.MVP**: A Model-View-Presenter (MVP) API.
 * **Robopupu.Dependency**: A dependency injection/pulling API.
