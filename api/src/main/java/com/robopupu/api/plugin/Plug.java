@@ -5,7 +5,7 @@ import com.robopupu.api.dependency.DependencyScope;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-/**
+/*
  * {@link Plug} is used to annotate instance fields for which the values are injects by
  * {@link Plugger} implementations.
  */

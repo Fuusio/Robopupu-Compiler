@@ -2,7 +2,7 @@ package com.robopupu.api.util;
 
 import java.util.HashMap;
 
-/**
+/*
  * {@link Params} extends {@link HashMap} to provide a convenience object for passing parameters.
  */
 public class Params extends HashMap<String, Object> {
@@ -10,7 +10,7 @@ public class Params extends HashMap<String, Object> {
     public Params() {
     }
 
-    /**
+    /*
      * Constructs an instance of {@link Params} with the given key and value.
      * @param key The as a {@link String}.
      * @param value The value as an {@link Object}.
@@ -19,7 +19,7 @@ public class Params extends HashMap<String, Object> {
         put(key, value);
     }
 
-    /**
+    /*
      * Gets the value as a {@code boolean}.
      * @param key The key as a {@link String}.
      * @return A {@code boolean}.
@@ -29,7 +29,7 @@ public class Params extends HashMap<String, Object> {
         return (Boolean) get(key);
     }
 
-    /**
+    /*
      * Gets the value as a {@code float}.
      * @param key The key as a {@link String}.
      * @return A {@code float}.
@@ -39,7 +39,7 @@ public class Params extends HashMap<String, Object> {
         return (Float) get(key);
     }
 
-    /**
+    /*
      * Gets the value as a {@code int}.
      * @param key The key as a {@link String}.
      * @return A {@code int}.
@@ -48,7 +48,7 @@ public class Params extends HashMap<String, Object> {
     public int getInt(final String key) {
         return (Integer) get(key);
     }
-    /**
+    /*
      * Gets the value as a {@code long}.
      * @param key The key as a {@link String}.
      * @return A {@code long}.
@@ -58,7 +58,7 @@ public class Params extends HashMap<String, Object> {
         return (Long) get(key);
     }
 
-    /**
+    /*
      * Gets the value as a {@link String}.
      * @param key The key as a {@link String}.
      * @return A {@link String}.
@@ -67,7 +67,7 @@ public class Params extends HashMap<String, Object> {
     public String getString(final String key) {
         return (String) get(key);
     }
-    /**
+    /*
      * Adds the given {@link Params} to this {@link Params}.
      * @param params A {@link Params}. May be {@code null}.
      */
@@ -79,7 +79,7 @@ public class Params extends HashMap<String, Object> {
         }
     }
 
-    /**
+    /*
      * Merges the given array of {@link Params} to single instance of {@link Params}.
      * @param params An array of {@link Params}. May be {@code null}.
      * @return A {@link Params}. May return {@code null}.

@@ -15,7 +15,7 @@
  */
 package com.robopupu.api.plugin;
 
-/**
+/*
  * {@link HandlerInvoker} provides an abstract base class for implementing an invocation delegate
  * that uses a {@linx android.os.Handler} for synchronising the invocation to main thread.
  */

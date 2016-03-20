@@ -1,6 +1,6 @@
 package com.robopupu.api.plugin;
 
-/**
+/*
  * {@link PlugMode} defines an enum type for specifying various {@link Plug} modes.
  */
 public enum PlugMode {

@@ -1,0 +1,39 @@
+apply plugin: 'java'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'robopupu'
+
+    publishedGroupId = 'com.robopupu.compiler'
+    libraryName = 'Robopupu Compiler'
+    artifact = 'robopupu-compiler'
+
+    libraryDescription = 'An Android library that provides a set of annotation processors used for generating code for the Robopupu APIs.'
+
+    siteUrl = 'https://github.com/Fuusio/Robopupu-Compiler'
+    gitUrl = 'https://github.com/Fuusio/Robopupu-Compiler.git'
+
+    libraryVersion = '0.3.0'
+
+    developerId = 'robopupu'
+    developerName = 'Marko Salmela'
+    developerEmail = 'marko.fuusio.salmela@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+// This is important even if Android Studio claims it isn't
+// used. Android can't interpret Java 8 byte code.
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    compile project (':api')
+    compile 'com.google.auto.service:auto-service:1.0-rc2'
+    compile 'com.squareup:javapoet:1.5.1'
+}
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

@@ -238,8 +238,8 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
     /**
      * Print the specified error message
      *
-     * @param element The {@link Element} for which the error was detected. May be {@code null).
-     * @param message A {@link String} containing the error message.
+     * @param element The {@link Element} for which the error was detected. May be {@code null}.
+     * @param errorMessage A {@link String} containing the error message.
      */
     public void handleError(final Element element, final String errorMessage) {
         mMessager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);

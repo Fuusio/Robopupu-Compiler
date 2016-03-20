@@ -15,18 +15,18 @@
  */
 package com.robopupu.api.fsm;
 
-/**
+/*
  * {@link StateEngineObserver} defines an observer interface for {@link StateEngine}.
  */
 public interface StateEngineObserver {
 
-    /**
+    /*
      * Invoked when the observed {@link StateEngine} is being disposed.
      * @param stateEngine The observed {@link StateEngine}.
      */
     void onDispose(StateEngine stateEngine);
 
-    /**
+    /*
      * Invoked when the specified error is deteceted in the observed {@link StateEngine}.
      * @param stateEngine The observed {@link StateEngine}.
      * @param error An {@link Error}.
@@ -34,19 +34,19 @@ public interface StateEngineObserver {
      */
     void onError(StateEngine stateEngine, StateEngine.Error error, String message);
 
-    /**
+    /*
      * Invoked when the observed {@link StateEngine} is resetted.
      * @param stateEngine The observed {@link StateEngine}.
      */
     void onReset(StateEngine stateEngine);
 
-    /**
+    /*
      * Invoked when the observed {@link StateEngine} is started.
      * @param stateEngine The observed {@link StateEngine}.
      */
     void onStart(StateEngine stateEngine);
 
-    /**
+    /*
      * Invoked when the observed {@link StateEngine} is stopped.
      * @param stateEngine The observed {@link StateEngine}.
      */

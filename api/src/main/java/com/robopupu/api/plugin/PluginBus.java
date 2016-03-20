@@ -43,7 +43,7 @@ public class PluginBus {
         mPlugins = new ArrayList<>();
     }
 
-    /**
+    /*
      * Gets the plugins having exactly the specified plug interface.
      * @param plugInterface A {@link Class} specifying the plug interface.
      * @return A {@link List} containing the plugins.
@@ -59,7 +59,7 @@ public class PluginBus {
         }
     }
 
-    /**
+    /*
      * Gets the plugs (i.e. {@link PlugInvoker}s) having exactly the specified plug interface.
      * @param plugInterface A {@link Class} specifying the plug interface.
      * @param includeExtendedInterfaces A {@link boolean} flag specifying if the extended interfaces
@@ -121,7 +121,7 @@ public class PluginBus {
         return (T)mInvocationPlugs.get(plugInterface);
     }
 
-    /**
+    /*
      * Plugs an instance of specific {@link Class} to this {@link PluginBus}.
      * @param pluginClass A  {@link Class}
      * @return The plugged instance as an {@link Object}
@@ -133,7 +133,7 @@ public class PluginBus {
         return (T) plugin;
     }
 
-    /**
+    /*
      * Plugs an instance of specific {@link Class} to this {@link PluginBus}. The instance is obtained
      * using the given {@link DependencyScope}.
      * @param pluginClass A  {@link Class}
@@ -147,7 +147,7 @@ public class PluginBus {
         return (T) plugin;
     }
 
-    /**
+    /*
      * Plugs the the given plugin {@link Object} to this {@link PluginBus}.
      * @param plugin A plugin {@link Object}.
      */
@@ -205,7 +205,7 @@ public class PluginBus {
         return plugger;
     }
 
-    /**
+    /*
      * This framework method should not be used by developers directly.
      * @param plugin The plugin to be plugged as an {@link Object}.
      * @param plugInterface A {@link Class} specifying the plugin interface type.
@@ -280,7 +280,7 @@ public class PluginBus {
         }
     }
 
-    /**
+    /*
      * Tests if the given {@link Object} is currently plugged as a plugin into this {@link PluginBus}.
      * @param object An {@link Object}.
      * @return A {@code boolean} value.
@@ -289,7 +289,7 @@ public class PluginBus {
         return getInstance().mPlugins.contains(object);
     }
 
-    /**
+    /*
      * Test if a method can be invoked on the given target {@link Object}. The target may not be
      * {@code null}, and in case of {@link PlugInvoker} it has to contain plugins.
      * @param target An {@link Object}.
@@ -305,7 +305,7 @@ public class PluginBus {
         return false;
     }
 
-    /**
+    /*
      * Tests if the specified class represents a plugin object.
      * @param pluginClass A {@link Class}.
      * @return A {@code boolean} value.

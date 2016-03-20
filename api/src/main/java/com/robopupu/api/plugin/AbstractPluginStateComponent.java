@@ -18,7 +18,7 @@ package com.robopupu.api.plugin;
 import com.robopupu.api.util.LifecycleState;
 import com.robopupu.api.util.Params;
 
-/**
+/*
  * {@link AbstractPluginStateComponent} provides an abstract base class for implementing
  * {@link PluginStateComponent}s.
  */
@@ -38,7 +38,7 @@ public class AbstractPluginStateComponent extends AbstractPluginComponent
         return mState.getLifecycleState();
     }
 
-    /**
+    /*
      * Initialize this {@link PluginComponent} with the given parameters.
      * @param params A {@link Params} containing the parameters.
      */

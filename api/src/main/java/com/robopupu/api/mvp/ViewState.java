@@ -17,7 +17,7 @@ package com.robopupu.api.mvp;
 
 import com.robopupu.api.util.LifecycleState;
 
-/**
+/*
  * {@link ViewState} is an object that is used to represent the current lifecycle state of
  * a {@link View}.
  */
@@ -39,7 +39,7 @@ public class ViewState {
         mInstanceStateSaved = saved;
     }
 
-    /**
+    /*
      * Gets the current {@link LifecycleState} of this {@link ViewState}.
      * @return A {@link LifecycleState}.
      */
@@ -47,7 +47,7 @@ public class ViewState {
         return mLifecycleState;
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is dormant. In dormant state the {@link View}
      * is instantiated, but not created i.e. method {@linx Fragment#onCreate(Bundle)}/{@linx Activity#onCreate(Bundle)}
      * has not been invoked yet.
@@ -57,7 +57,7 @@ public class ViewState {
         return mLifecycleState.isDormant();
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is created. In created state the {@link View}
      * method {@linx Fragment#onCreate(Bundle)}/{@linx Activity#onCreate(Bundle)} has been invoked.
      * @return A {@code boolean} value.
@@ -66,7 +66,7 @@ public class ViewState {
         return mLifecycleState.isCreated();
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is started or resumed. In started state the method
      * {@linx Fragment#onStart()}/{@linx Activity#onStart()} and possibly {@linx Fragment#onResume()}/{@linx Activity#onResume()}
      * have been invoked. Method {@linx ViewState#getLifecycleState()} can be used to determinate
@@ -77,7 +77,7 @@ public class ViewState {
         return mLifecycleState.isStarted() || mLifecycleState.isResumed();
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is resumed. In resumed state both the methods
      * {@linx Fragment#onStart()}/{@linx Activity#onStart()} and {@linx Fragment#onResume()}/{@linx Activity#onResume()}
      * have been invoked.
@@ -87,7 +87,7 @@ public class ViewState {
         return mLifecycleState.isResumed();
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is paused. In paused state the method
      * {@linx Fragment#onPause()}/{@linx Activity#onPause()} has been invoked.
      * @return A {@code boolean} value.
@@ -96,7 +96,7 @@ public class ViewState {
         return mLifecycleState.isPaused();
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is restarted. In restarted state the method
      * {@linx Activity#onRestart()} has been invoked.
      * @return A {@code boolean} value.
@@ -105,7 +105,7 @@ public class ViewState {
         return isStarted() && mRestarted;
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is stopped. In stopped state the method
      * {@linx Fragment#onStop()}/{@linx Activity#onStop()} has been invoked.
      * @return A {@code boolean} value.
@@ -114,7 +114,7 @@ public class ViewState {
         return mLifecycleState.isStopped() || mLifecycleState.isDestroyed();
     }
 
-    /**
+    /*
      * Tests if the {@link LifecycleState} is destroyed. In destroyed state the method
      * {@linx Fragment#onDestroy()}/{@linx Activity#onDestroy()} has been invoked.
      * @return A {@code boolean} value.
@@ -123,28 +123,28 @@ public class ViewState {
         return mLifecycleState.isDestroyed();
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is created.
      */
     public void onCreate() {
         mLifecycleState = LifecycleState.CREATED;
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is started.
      */
     public void onStart() {
         mLifecycleState = LifecycleState.STARTED;
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is restarted.
      */
     public void onRestart() {
         mRestarted = true;
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is paused.
      */
     public void onPause() {
@@ -152,7 +152,7 @@ public class ViewState {
         mMovedToBackground = true;
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is resumed.
      */
     public void onResume() {
@@ -161,14 +161,14 @@ public class ViewState {
         mMovedToBackground = false;
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is stopped.
      */
     public void onStop() {
         mLifecycleState = LifecycleState.STOPPED;
     }
 
-    /**
+    /*
      * Invoked when the {@link View} is destroyed.
      */
     public void onDestroy() {

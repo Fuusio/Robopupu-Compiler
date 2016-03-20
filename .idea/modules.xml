@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Robopupu-Compiler.iml" filepath="$PROJECT_DIR$/Robopupu-Compiler.iml" />
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/compiler.iml" filepath="$PROJECT_DIR$/compiler/compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/robopupu-compiler/robopupu-compiler.iml" filepath="$PROJECT_DIR$/robopupu-compiler/robopupu-compiler.iml" />
     </modules>
   </component>
 </project>

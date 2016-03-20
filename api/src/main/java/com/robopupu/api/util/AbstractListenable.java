@@ -18,7 +18,7 @@ package com.robopupu.api.util;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/*
  * {@link AbstractListenable} is an abstract base class for concrete implementations of
  * {@link Listenable} interface.
  */

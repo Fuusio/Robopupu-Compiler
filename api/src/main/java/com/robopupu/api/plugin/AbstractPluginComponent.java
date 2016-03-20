@@ -17,7 +17,7 @@ package com.robopupu.api.plugin;
 
 import com.robopupu.api.dependency.ScopedObject;
 
-/**
+/*
  * {@link AbstractPluginComponent} provides an abstract base class for implementing
  * {@link PluginComponent}s.
  */

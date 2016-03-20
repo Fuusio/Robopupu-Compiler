@@ -15,7 +15,7 @@
  */
 package com.robopupu.api.dependency;
 
-/**
+/*
  * {@link ScopedObject} provides an abstract base class for implementing {@link Scopeable}.
  */
 public abstract class ScopedObject implements Scopeable {

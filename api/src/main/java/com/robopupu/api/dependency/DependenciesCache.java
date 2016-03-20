@@ -4,7 +4,7 @@ import com.robopupu.api.mvp.View;
 
 import java.util.HashMap;
 
-/**
+/*
  * {@link DependenciesCache} is used for saving and restoring {@link DependencyScope}s for
  * their {@link DependencyScopeOwner}s, and for saving and accessing {@link DependencyMap}s using
  * {@link String} based keys. {@link View}s have a dedicated method {@link View#getDependenciesKey()}

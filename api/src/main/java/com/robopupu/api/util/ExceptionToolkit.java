@@ -17,13 +17,13 @@ package com.robopupu.api.util;
 
 import java.text.MessageFormat;
 
-/**
+/*
  * {@code ExceptionToolkit} provides a set of convenience methods and utilities for throwing,
  * handling, and using {@link Exception}s.
  */
 public class ExceptionToolkit {
 
-    /**
+    /*
      * Asserts that the given parameter value is not {@code null}. If {@code null}, throws an
      * {@link IllegalArgumentException}.
      *
@@ -39,7 +39,7 @@ public class ExceptionToolkit {
         }
     }
 
-    /**
+    /*
      * Formats the given message {@link String} with given two arguments and by using the
      * {@link MessageFormat} class.
      *
@@ -51,7 +51,7 @@ public class ExceptionToolkit {
         return StringToolkit.formatString(message, args);
     }
 
-    /**
+    /*
      * Creates and throws an {@link IllegalArgumentException} with the given message.
      *
      * @param message The message to be displayed as {@link String}.
@@ -60,7 +60,7 @@ public class ExceptionToolkit {
         throw new IllegalArgumentException(message);
     }
 
-    /**
+    /*
      * Creates and throws an {@link IllegalStateException} with the given message.
      *
      * @param message The message to be displayed as {@link String}.
@@ -69,7 +69,7 @@ public class ExceptionToolkit {
         throw new IllegalStateException(message);
     }
 
-    /**
+    /*
      * Creates and throws an {@link IllegalArgumentException} with the given message and message
      * formatting arguments.
      *
@@ -81,7 +81,7 @@ public class ExceptionToolkit {
         throw new IllegalArgumentException(errorMessage);
     }
 
-    /**
+    /*
      * Creates and throws an {@link IllegalArgumentException} with the given message and message
      * formatting arguments.
      *

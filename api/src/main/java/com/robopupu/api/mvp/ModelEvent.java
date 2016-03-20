@@ -2,7 +2,7 @@ package com.robopupu.api.mvp;
 
 import java.util.EventObject;
 
-/**
+/*
  * {@link ModelEvent} extends {@link  EventObject} to provide an abstract base class for implementing
  * {@link Model} events.
  *

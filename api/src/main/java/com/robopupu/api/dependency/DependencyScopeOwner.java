@@ -15,21 +15,21 @@
  */
 package com.robopupu.api.dependency;
 
-/**
+/*
  * An interface for objects that provide and own a {@link DependencyScope}s. Object implementing
  * this interface typically also manage the lifecycle of the {@link DependencyScope} they provide
  * by activating and deactivating it.
  */
 public interface DependencyScopeOwner {
 
-    /**
+    /*
      * Gets the {@link DependencyScope} owned by this {@link DependencyScopeOwner}.
      *
      * @return A {@link DependencyScope}.
      */
     DependencyScope getOwnedScope();
 
-    /**
+    /*
      * Gets the {@link Class} of {@link DependencyScope} owned by this {@link DependencyScopeOwner}.
      *
      * @return A {@link Class}.

@@ -25,7 +25,7 @@ import com.robopupu.api.plugin.PluginStateComponent;
 
 import java.util.List;
 
-/**
+/*
  * {@link Feature} defines an interface for {@link PluginStateComponent}s that implement of
  * application feature as a component. A concrete {@link Feature} implementation may implement logic
  * for UI navigation and UI flow logic.<b></b> A {@link Feature}  is also
@@ -33,14 +33,14 @@ import java.util.List;
  */
 public interface Feature extends PresenterListener, PluginStateComponent {
 
-    /**
+    /*
      * Gets the currently active {@link View}s.
      *
      * @return A {@link List} containing the currently active views as {@link View}s.
      */
     List<View> getActiveViews();
 
-    /**
+    /*
      * Tests if the given {@link View} is currently active one.
      *
      * @param view A {@link View}.
@@ -48,27 +48,27 @@ public interface Feature extends PresenterListener, PluginStateComponent {
      */
     boolean isActiveView(View view);
 
-    /**
+    /*
      * Sets this {@link Feature} to be an Activity Feature that is owned and controlled by
      * an {@linx Activity}.
      * @param isActivityFeature A {@code boolean} value.
      */
     void setActivityFeature(boolean isActivityFeature);
 
-    /**
+    /*
      * Tests if this {@link Feature} is set to be an Activity Feature that is owned and controlled
      * by an {@linx Activity}.
      * @return  A {@code boolean} value.
      */
     boolean isActivityFeature();
 
-    /**
+    /*
      * Tests if any of the {@link View}s of this {@link Feature} is in foreground and has a focus.
      * @return A {@code boolean}.
      */
     boolean hasFocusedView();
 
-    /**
+    /*
      * Tests if this {@link Feature} is in foreground i.e. it has at least one visible
      * {@link View}.
      *
@@ -76,37 +76,37 @@ public interface Feature extends PresenterListener, PluginStateComponent {
      */
     boolean hasForegroundView();
 
-    /**
+    /*
      * Tests if this {@link Feature} handles the back pressed event.
      *
      * @return A {@code boolean} value.
      */
     boolean isBackPressedEventHandler();
 
-    /**
+    /*
      * Tests if this {@link Feature} has any {@link View}s in back stack.
      * @return A {@code boolean} value.
      */
     boolean hasViewsInBackStack();
 
-    /**
+    /*
      * Clears the back stack managed by {@linx FragmentManager}.
      */
     void clearBackStack();
 
-    /**
+    /*
      * Tests if the previous {@link View} can be navigated back to.
      *
      * @return A {@code boolean} value.
      */
     boolean canGoBack();
 
-    /**
+    /*
      * Goes back to previous {@link View}.
      */
     void goBack();
 
-    /**
+    /*
      * Invoked to pause this {@link Feature}.
      *
      * @param finishing A {@code boolean} value indicating if the {@link Feature} is
@@ -114,7 +114,7 @@ public interface Feature extends PresenterListener, PluginStateComponent {
      */
     void pause(boolean finishing);
 
-    /**
+    /*
      * Finishes this {@link Feature}. A finished {@link Feature} is stopped and destroyed.
      * If a {@link Feature} is implements a {@link PluginComponent} it is
      * unplugged from a {@link PluginBus}.

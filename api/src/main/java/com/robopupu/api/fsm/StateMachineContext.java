@@ -18,7 +18,7 @@ package com.robopupu.api.fsm;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-/**
+/*
  * {@link StateMachineContext} is used to annotate interface which defines methods that can be used
  * to set up a context for a state machine implementation.
  */

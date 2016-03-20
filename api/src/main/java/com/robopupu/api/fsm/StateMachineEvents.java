@@ -18,7 +18,7 @@ package com.robopupu.api.fsm;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-/**
+/*
  * {@link StateMachineEvents} is used to annotate interface which defines methods that are used as
  * events triggering state transitions for a state machine implementation.
  */

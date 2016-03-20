@@ -15,13 +15,13 @@
  */
 package com.robopupu.api.mvp;
 
-/**
+/*
  * {@link PresenterDependant} is the interface to be implemented by concrete implementations of
  * {@link View}.
  */
 public interface PresenterDependant<T_Presenter extends Presenter> {
 
-    /**
+    /*
      * Gets the {@link Presenter} of this {@link PresenterDependant}.
      *
      * @return A {@link Presenter}.

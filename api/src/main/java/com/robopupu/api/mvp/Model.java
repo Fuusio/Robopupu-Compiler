@@ -18,7 +18,7 @@ package com.robopupu.api.mvp;
 import com.robopupu.api.util.Gsonable;
 import com.robopupu.api.util.Listenable;
 
-/**
+/*
  * {@link Model} is interface for Model components in a MVP architectural pattern implementation.
  *
  * @param <T_EventType> The parametrised model event type.
@@ -28,7 +28,7 @@ public interface Model<T_EventType, T_Listener extends Model.Listener>
 
     interface Listener {
 
-        /**
+        /*
          * Invoked when the {@link Model} has changed as specified by the given {@link ModelEvent}.
          *
          * @param event A {@link ModelEvent}.

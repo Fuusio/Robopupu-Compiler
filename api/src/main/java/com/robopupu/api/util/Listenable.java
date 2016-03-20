@@ -21,14 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.List;
 
-/**
+/*
  * {@link Listenable} defines an interface for objects that can have listeners for listening their
  * events. A concrete implementation of {@link Listenable} can be annotated using
  * {@link Singled} annotation to allow only one listener.
  */
 public interface Listenable<T_Listener> {
 
-    /**
+    /*
      * Return a single listener if there is only one listener. Otherwise throws
      * a {@link IllegalStateException}
      * @return A listener.
@@ -47,7 +47,7 @@ public interface Listenable<T_Listener> {
 
     boolean hasAnyListeners();
 
-    /**
+    /*
      * Test if this {@link Listenable} is annotated with {@link Singled} to indicate that this
      * {@link Listenable} is allowed to have at most a single listener.
      * @return A {@code boolean} value.

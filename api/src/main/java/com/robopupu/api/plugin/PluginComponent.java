@@ -17,31 +17,31 @@ package com.robopupu.api.plugin;
 
 import com.robopupu.api.dependency.Scopeable;
 
-/**
+/*
  * {@link PluginComponent} extends {@link Scopeable} to define an interface for plugin components
  * that can be plugged into {@link PluginBus}.
  */
 public interface PluginComponent {
 
-    /**
+    /*
      * Invoked when this {@link PluginComponent} has been plugged to given {@link PluginBus}.
      * @param bus A {@link PluginBus}.
      */
     void onPlugged(PluginBus bus);
 
-    /**
+    /*
      * Invoked when this {@link PluginComponent} has been unplugged from given {@link PluginBus}.
      * @param bus A {@link PluginBus}.
      */
     void onUnplugged(PluginBus bus);
 
-    /**
+    /*
      * Invoked when the given plugin object has been plugged to {@link PluginBus}.
      * @param plugin A plugin as a {@link Object}.
      */
     void onPluginPlugged(Object plugin);
 
-    /**
+    /*
      * Invoked when the given plugin object has been unplugged from {@link PluginBus}.
      * @param plugin A plugin as a {@link Object}.
      */

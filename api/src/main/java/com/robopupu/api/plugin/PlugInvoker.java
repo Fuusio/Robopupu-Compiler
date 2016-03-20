@@ -17,7 +17,7 @@ package com.robopupu.api.plugin;
 
 import java.util.ArrayList;
 
-/**
+/*
  * {@link PlugInvoker} provides an abstract base class for implementing plugin interface specific
  * invocation handlers.
  */

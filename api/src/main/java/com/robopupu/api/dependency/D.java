@@ -15,7 +15,7 @@
  */
 package com.robopupu.api.dependency;
 
-/**
+/*
  * Class {@link D} extends {@link Dependency} for convenience to provide a very short class name
  * that is easy to type. For instance: {@code final Foo foo = D.get(Foo.class)}.
  */

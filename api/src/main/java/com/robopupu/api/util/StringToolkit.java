@@ -15,9 +15,6 @@
  */
 package com.robopupu.api.util;
 
-// import android.content.res.Resources;
-// import android.support.annotation.StringRes;
-
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
@@ -25,36 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**
- * {@link StringToolkit} provides a set of convenience methods and utilities for using and modifying
- * Strings.
- */
 public class StringToolkit {
 
     public static final Charset CHARSET_UTF8 = Charset.forName("UTF8");
 
     public static final String INVALID_FILENAME_CHARS = "|\\?*<\":>+[]/'";
 
-    /**
-     * Creates a valid identifier string from the given {@link String}.
-     *
-     * @param string The object name as a {@link String}.
-     * @return The valid identifier as a {@link String}.
-     * @throws IllegalArgumentException If the given string is {@code null}.
-     */
     public static String createValidIdentifier(final String string) {
         return createValidIdentifier(string, '_');
     }
 
-    /**
-     * Creates a valid identifier string from the given {@link String} where white spaces and
-     * other invalid identifier characters are replaced with the given replacement character.
-     *
-     * @param string The object name as a {@link String}.
-     * @param replaceChar A replace {@code char}.
-     * @return The valid identifier as a {@link String}.
-     * @throws IllegalArgumentException If the given string is {@code null}.
-     */
     public static String createValidIdentifier(final String string, final char replaceChar) {
         if (string == null) {
             throw new IllegalArgumentException();
@@ -76,15 +53,6 @@ public class StringToolkit {
         return identifier.toString();
     }
 
-    /**
-     * Tests if the given {@link String} contains only whitespaces. If the {@link String} is
-     * {@code null}, boolean value {@code true} is returned.
-     *
-     * @param string The {@link String} to be tested.
-     * @param start  The start offset.
-     * @param length The length of data.
-     * @return A {@code boolean} value.
-     */
     public static boolean containsOnlyWhitespaces(final String string, final int start, final int length) {
         if (string == null) {
             return true;
@@ -94,14 +62,6 @@ public class StringToolkit {
         return containsOnlyWhitespaces(buffer, 0, length - start);
     }
 
-    /**
-     * Tests if the given char array contains only whitespaces
-     *
-     * @param chars  The array of {@code chars}.
-     * @param start  The start offset.
-     * @param length The length of data.
-     * @return A {@code boolean} value.
-     */
     public static boolean containsOnlyWhitespaces(final char[] chars, final int start, final int length) {
         final String string = new String(chars, start, length);
         final int stringLength = string.length();
@@ -117,16 +77,6 @@ public class StringToolkit {
         return true;
     }
 
-    /**
-     * Tests if the given {@code char} array equals with the given {@link String}.
-     *
-     * @param chars  The given char array.
-     * @param length The number of characters to be compared. Should not exceed the length of the
-     *               {@code char} array.
-     * @param string The given {@link String}. Cannot be {@code null}.
-     * @return A boolean value {@code true} if the {@code char} array and the {@link String} contain
-     * the same characters.
-     */
     public static boolean equals(final char[] chars, final int length, final String string) {
         if (length == string.length()) {
             for (int i = 0; i < length; i++) {
@@ -139,16 +89,6 @@ public class StringToolkit {
         return false;
     }
 
-    /**
-     * Tests if the given {@code char} array equals with the given {@link String}.
-     *
-     * @param chars  The given {@code char} array.
-     * @param offset The offset for the {@code char} array.
-     * @param length The number of characters to be compared. Should not exceed the length of the
-     *               {@code char} array.
-     * @param string The given {@link String}. Cannot be {@code null}.
-     * @return true if the {@code char} array and the {@link String} contain the same characters.
-     */
     public static boolean equals(final char[] chars, final int offset, final int length,
                                  final String string) {
         if (length == string.length()) {
@@ -162,12 +102,6 @@ public class StringToolkit {
         return false;
     }
 
-    /**
-     * Tests whether the given {@link String} represents a syntactically valid Java identifier.
-     *
-     * @param identifier The given {@link String} to be tested.
-     * @return A {@code boolean}.
-     */
     public static boolean isValidIdentifier(final String identifier) {
         if (identifier == null) {
             return false;
@@ -195,13 +129,6 @@ public class StringToolkit {
 
         return true;
     }
-
-    /**
-     * Tests whether the given {@link String} represents a syntactically valid namespace name.
-     *
-     * @param string The given {@link String} to be tested.
-     * @return A {@code boolean}.
-     */
 
     public static boolean isValidNamespace(final String string) {
         if (string == null) {
@@ -248,13 +175,6 @@ public class StringToolkit {
         return new String(fileName.getBytes(), CHARSET_UTF8);
     }
 
-    /**
-     * Formats the given {@link String} with given arguments.
-     *
-     * @param string The string {@link String}.
-     * @param args   A {@link List} containing the arguments for {@link String#format} method.
-     * @return A formatted string {@link String}.
-     */
     public static String formatString(final String string, final List<?> args) {
         if (args != null) {
             return formatString(string, args.toArray());
@@ -263,7 +183,7 @@ public class StringToolkit {
         }
     }
 
-    /**
+    /*
      * Formats the given  {@link String} with given arguments and by using the
      * {@link String#format} method.
      *
@@ -288,7 +208,7 @@ public class StringToolkit {
         }
     }
 
-    /**
+    /*
      * Changes the first character of the given {@link String} to be a lowercase character.
      *
      * @param string The given {@link String}. It must contain at least one character.
@@ -306,7 +226,7 @@ public class StringToolkit {
         }
     }
 
-    /**
+    /*
      * Parses the property key to create an array of {@link String}s containing individual
      * tokens of the key.
      *
@@ -326,7 +246,7 @@ public class StringToolkit {
         return tokenStrings;
     }
 
-    /**
+    /*
      * Parses the tokens separated by the specified separator from the given {@link String}. Parsed
      * tokens are stored into the given Vector.
      *
@@ -343,7 +263,7 @@ public class StringToolkit {
         }
     }
 
-    /**
+    /*
      * Strips all the white spaces from the given {@link String}.
      *
      * @param string The given {@link String}.
@@ -364,7 +284,7 @@ public class StringToolkit {
         return buffer.toString();
     }
 
-    /**
+    /*
      * Changes the first character of the given {@link String} to be a uppercase character.
      *
      * @param string The given {@link String}. It must contain at least one character.
@@ -382,7 +302,7 @@ public class StringToolkit {
         }
     }
 
-    /**
+    /*
      * Test if the given {@link CharSequence} is not {@code null}, but empty, or contains just
      * white space.
      * @param string A {@link CharSequence} to be tested.
@@ -392,7 +312,7 @@ public class StringToolkit {
         return (string != null && string.toString().trim().length() == 0);
     }
 
-    /**
+    /*
      * Return the given {@link String} as value if it is not empty as tested by
      * {@link StringToolkit#isNotEmpty(String)} or the given default value.
      * @param string A {@link String}
@@ -403,7 +323,7 @@ public class StringToolkit {
         return isNotEmpty(string) ? string : alternativeString;
     }
 
-    /**
+    /*
      * Truncates the given {@link String} to specified length.
      * @param string A {@link String} to be truncated.
      * @param length The length of truncated {@link String}.
@@ -418,7 +338,7 @@ public class StringToolkit {
         return string;
     }
 
-    /**
+    /*
      * Reverses the given {@link String}.
      * @param string A {@link String} to be reversed.
      * @return The reversed {@link String}.
@@ -427,7 +347,7 @@ public class StringToolkit {
         return new StringBuilder(string).reverse().toString();
     }
 
-    /**
+    /*
      * Test if the given {@link String} is either {@code null}, empty, or contains just white space
      * @param string A {@link String} to be tested.
      * @return A {@code boolean}.
@@ -436,7 +356,7 @@ public class StringToolkit {
         return (string == null || string.trim().isEmpty());
     }
 
-    /**
+    /*
      * Test if the given {@link String} is not {@code null}, empty, nor contains just white space
      * @param string A {@link String} to be tested.
      * @return A {@code boolean}.

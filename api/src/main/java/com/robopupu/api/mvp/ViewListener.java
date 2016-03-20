@@ -2,12 +2,12 @@ package com.robopupu.api.mvp;
 
 import com.robopupu.api.util.Params;
 
-/**
+/*
  * {@link com.robopupu.api.mvp.ViewListener} a listener interface for receiving lifecycle events
  * from a {@link View}. This interface is mainly intended to be used by an attached {@link Presenter}.
  */
 public interface ViewListener {
-    /**
+    /*
      * Invoked by a {@link View} implementation when it is created-
      *
      * @param view    A {@link View}
@@ -15,7 +15,7 @@ public interface ViewListener {
      */
     void onViewCreated(View view, Params inState);
 
-    /**
+    /*
      * Invoked by a {@link View} implementation when it is resumed,
      * e.g. on {@linx ViewFragment#onResume()}.
      *
@@ -23,7 +23,7 @@ public interface ViewListener {
      */
     void onViewResume(View view);
 
-    /**
+    /*
      * Invoked by a {@link View} implementation when it is paused,
      * e.g. on {@linx ViewFragment#onPause()}.
      *
@@ -31,7 +31,7 @@ public interface ViewListener {
      */
     void onViewPause(View view);
 
-    /**
+    /*
      * Invoked by a {@link View} implementation when it is started,
      * e.g. on {@linx ViewFragment#onStart()}.
      *
@@ -39,7 +39,7 @@ public interface ViewListener {
      */
     void onViewStart(View view);
 
-    /**
+    /*
      * Invoked by a {@link View} implementation when it is stopped,
      * e.g. on {@linx ViewFragment#onStop()}.
      *
@@ -47,7 +47,7 @@ public interface ViewListener {
      */
     void onViewStop(View view);
 
-    /**
+    /*
      * Invoked by a {@link View} implementation when it is destroyed,
      * e.g. on {@linx ViewFragment#onDestroy()}.
      *

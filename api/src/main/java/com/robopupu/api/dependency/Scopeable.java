@@ -15,7 +15,7 @@
  */
 package com.robopupu.api.dependency;
 
-/**
+/*
  * {@link Scopeable} define interface for objects that can store a reference to
  * a {@link DependencyScope}.
  */
