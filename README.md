@@ -21,7 +21,7 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
 ## Changelog
-The current version is 0.3.0.
+The current version is 0.3.1.
 
 ## License
 ```
