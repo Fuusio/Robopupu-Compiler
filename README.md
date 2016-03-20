@@ -14,7 +14,6 @@ Robopupu APIs are used for architecting and developing Android applications. To 
 
 Check out the [Robopupu project website](http://robopupu.com/) and [Robopupu Github repository](https://github.com/Fuusio/Robopupu) for further information.
 
-
 ## Documentation
 Robopupu documentation can be found in [Robopupu project website](http://robopupu.com/). 
 

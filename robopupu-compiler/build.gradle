@@ -1,27 +1,47 @@
 apply plugin: 'java'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'robopupu'
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def bintrayUser = properties.getProperty('bintray.user')
+def bintrayApikey = properties.getProperty('bintray.api.key')
 
-    publishedGroupId = 'com.robopupu.compiler'
-    libraryName = 'Robopupu Compiler'
-    artifact = 'robopupu-compiler'
+bintray {
+    user = bintrayUser
+    key = bintrayApikey
+    publications = ['RobopupuCompilerPublication']
+    pkg {
+        repo = 'maven'
+        name = 'robopupu'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Fuusio/Robopupu-Compiler.git'
+        version {
+            name = '0.3.1'
+        }
+    }
+}
 
-    libraryDescription = 'An Android library that provides a set of annotation processors used for generating code for the Robopupu APIs.'
+publishing {
+    publications {
+        RobopupuCompilerPublication(MavenPublication) {
+            from components.java
+            groupId 'com.robopupu'
+            artifactId 'robopupu-compiler'
+            version '0.3.1'
+        }
+    }
+}
 
-    siteUrl = 'https://github.com/Fuusio/Robopupu-Compiler'
-    gitUrl = 'https://github.com/Fuusio/Robopupu-Compiler.git'
+configurations {
+    provided
+}
 
-    libraryVersion = '0.3.0'
-
-    developerId = 'robopupu'
-    developerName = 'Marko Salmela'
-    developerEmail = 'marko.fuusio.salmela@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
 }
 
 // This is important even if Android Studio claims it isn't
@@ -30,10 +50,7 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
-    compile project (':api')
     compile 'com.google.auto.service:auto-service:1.0-rc2'
     compile 'com.squareup:javapoet:1.5.1'
+    provided files('libs/api.jar')
 }
-
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
