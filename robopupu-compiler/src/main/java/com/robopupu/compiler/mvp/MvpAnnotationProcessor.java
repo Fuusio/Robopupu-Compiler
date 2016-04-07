@@ -1,7 +1,6 @@
 package com.robopupu.compiler.mvp;
 
 import com.google.auto.service.AutoService;
-
 import com.robopupu.api.mvp.OnChecked;
 import com.robopupu.api.mvp.OnClick;
 import com.robopupu.api.mvp.OnTextChanged;
@@ -246,7 +245,7 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean isPresenterInterface(final TypeElement interfaceElement) {
+    private static boolean isPresenterInterface(final TypeElement interfaceElement) {
 
         if (interfaceElement == null) {
             return false;

@@ -23,12 +23,19 @@ import com.robopupu.api.util.LifecycleState;
  */
 public class ViewState {
 
+    private final View mView;
+
     private boolean mInstanceStateSaved;
     private LifecycleState mLifecycleState;
     private boolean mMovedToBackground;
     private boolean mRestarted;
 
     public ViewState() {
+        this(null);
+    }
+
+    public ViewState(final View view) {
+        mView = view;
         mInstanceStateSaved = false;
         mLifecycleState = LifecycleState.DORMANT;
         mMovedToBackground = false;

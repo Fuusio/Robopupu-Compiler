@@ -1,5 +1,8 @@
 package com.robopupu.compiler.plugin;
 
+import com.robopupu.api.mvp.View;
+import com.robopupu.api.mvp.ViewPlugInvoker;
+import com.robopupu.compiler.util.Keyword;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -26,6 +29,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -42,14 +46,17 @@ public class PlugInterfaceAnnotatedInterface {
     private static final String SUFFIX_PLUG_INVOKER = "_PlugInvoker";
     private static final ClassName CLASS_HANDLER_INVOKER = ClassName.get("com.robopupu.api.plugin", "HandlerInvoker");
     private static final ClassName CLASS_PLUG_INVOKER = ClassName.get(PlugInvoker.class);
+    private static final ClassName CLASS_VIEW_PLUG_INVOKER = ClassName.get(ViewPlugInvoker.class);
 
     private final TypeElement mTypeElement;
+    private final boolean mIsViewInterface;
 
     private Types mTypeUtils;
     private PlugMode mPlugMode;
 
     public PlugInterfaceAnnotatedInterface(final TypeElement typeElement) throws com.robopupu.compiler.util.ProcessorException {
         mTypeElement = typeElement;
+        mIsViewInterface = isViewInterface(mTypeElement);
     }
 
     public TypeElement getTypeElement() {
@@ -199,7 +206,8 @@ public class PlugInterfaceAnnotatedInterface {
         final String packageName = packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
         final ClassName interfaceName = ClassName.get(mTypeElement);
         final String suffixedClassName = mTypeElement.getSimpleName() + SUFFIX_PLUG_INVOKER;
-        final ParameterizedTypeName superClassName = ParameterizedTypeName.get(CLASS_PLUG_INVOKER, interfaceName);
+        final ClassName pluginInvokerClass = mIsViewInterface ? CLASS_VIEW_PLUG_INVOKER : CLASS_PLUG_INVOKER;
+        final ParameterizedTypeName superClassName = ParameterizedTypeName.get(pluginInvokerClass, interfaceName);
 
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(suffixedClassName);
         classBuilder.superclass(superClassName);
@@ -212,7 +220,11 @@ public class PlugInterfaceAnnotatedInterface {
         for (final Element element : enclosedElements) {
 
             if (element.getKind() == ElementKind.METHOD) {
-                methodElements.add((ExecutableElement) element);
+                final ExecutableElement methodElement = (ExecutableElement) element;
+
+                if (isInvokerMethodCreatedFor(methodElement)) {
+                    methodElements.add(methodElement);
+                }
             }
         }
 
@@ -227,7 +239,11 @@ public class PlugInterfaceAnnotatedInterface {
 
             for (final Element element : interfaceTypeElement.getEnclosedElements()) {
                 if (element.getKind() == ElementKind.METHOD) {
-                    methodElements.add((ExecutableElement) element);
+                    final ExecutableElement methodElement = (ExecutableElement) element;
+
+                    if (isInvokerMethodCreatedFor(methodElement)) {
+                        methodElements.add(methodElement);
+                    }
                 }
             }
         }
@@ -303,8 +319,12 @@ public class PlugInterfaceAnnotatedInterface {
 
                     if (returnsValue) {
                         writer.clear();
-                        //writer.k(Keyword.RETURN).a(getDefaultReturnValue(returnType));
-                        writer.k(com.robopupu.compiler.util.Keyword.THROW).k(com.robopupu.compiler.util.Keyword.NEW).a("NullPointerException(\"Invocation target not available.\")");
+                        // writer.k(com.robopupu.compiler.util.Keyword.THROW).k(com.robopupu.compiler.util.Keyword.NEW).a("NullPointerException(\"Invocation target not available.\")");
+                        writer.a("handleInvocationTargetNotAvailable(").a(returnsValue).a(")");
+                        methodBuilder.addStatement(writer.getCode());
+
+                        writer.clear();
+                        writer.k(Keyword.RETURN).a(getDefaultReturnValue(returnType));
                         methodBuilder.addStatement(writer.getCode());
                     }
                 }
@@ -315,6 +335,30 @@ public class PlugInterfaceAnnotatedInterface {
 
         final TypeSpec typeSpec = classBuilder.build();
         JavaFile.builder(packageName, typeSpec).build().writeTo(filer);
+    }
+
+    private boolean isInvokerMethodCreatedFor(final ExecutableElement methodElement) {
+        if (mIsViewInterface) {
+            if (returnsValue(methodElement)) {
+                final String methodName = methodElement.getSimpleName().toString();
+                final int parameterCount = getParameterCount(methodElement);
+
+                if (parameterCount == 0 && (methodName.contentEquals("getState") || methodName.contentEquals("getViewTag"))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private int getParameterCount(final ExecutableElement methodElement) {
+        final List<? extends VariableElement> parameterElements = methodElement.getParameters();
+        return parameterElements.size();
+    }
+
+    private boolean returnsValue(final ExecutableElement methodElement) {
+        final TypeMirror returnType = methodElement.getReturnType();
+        return returnType.getKind() != TypeKind.VOID;
     }
 
     private String getDefaultReturnValue(final TypeMirror returnType) {
@@ -342,5 +386,36 @@ public class PlugInterfaceAnnotatedInterface {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static boolean isViewInterface(final TypeElement interfaceElement) {
+
+        if (interfaceElement == null) {
+            return false;
+        }
+
+        final String className = interfaceElement.getQualifiedName().toString();
+
+        if (className.startsWith("java.lang")) {
+            return false;
+        }
+
+        if (className.contentEquals(View.class.getName())) {
+            return true;
+        }
+
+        final List<? extends TypeMirror> interfaces = interfaceElement.getInterfaces();
+
+        for (final TypeMirror interfaceTypeMirror : interfaces) {
+            if (isViewInterface((TypeElement) ((DeclaredType) interfaceTypeMirror).asElement()))  {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean typesEqual(final Class<?> type, final TypeMirror typeMirror) {
+        return type.getName().equals(typeMirror.toString());
     }
 }

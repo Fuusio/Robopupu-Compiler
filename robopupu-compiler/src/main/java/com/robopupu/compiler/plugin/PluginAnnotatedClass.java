@@ -1,16 +1,15 @@
 package com.robopupu.compiler.plugin;
 
+import com.robopupu.api.dependency.D;
+import com.robopupu.api.dependency.DependencyScope;
+import com.robopupu.api.plugin.Plugger;
+import com.robopupu.api.plugin.Plugin;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
-import com.robopupu.api.dependency.D;
-import com.robopupu.api.dependency.DependencyScope;
-import com.robopupu.api.plugin.Plugger;
-import com.robopupu.api.plugin.Plugin;
 
 import java.io.IOException;
 import java.util.HashMap;
