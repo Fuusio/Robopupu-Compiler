@@ -59,7 +59,22 @@ public class DependencyProviderClass {
         mProviderMethods.add(providerMethod);
     }
 
+    /**
+     * Generates code for {@link DependencyProvider} implementation.
+     * @param elementUtils An {@link Elements} providing type utilities.
+     * @param filer A {@link Filer} to write generated code to a file.
+     * @throws IOException
+     */
     public void generateCode(final Elements elementUtils, final Filer filer) throws IOException {
+
+        // Check if there is need to generate code for a DependencyProvider implementation
+
+        if (mProviderClasses.isEmpty() && mProviderConstructors.isEmpty() && mProviderMethods.isEmpty()) {
+            return;
+        }
+
+        // Generate code for a DependencyProvider implementation
+
         final PackageElement packageElement = elementUtils.getPackageOf(mClassElement);
         final String packageName = packageElement.isUnnamed() ? "" : packageElement.getQualifiedName().toString();
         final String suffixedClassName = mClassName + SUFFIX_DEPENDENCY_PROVIDER;

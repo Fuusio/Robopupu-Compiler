@@ -18,7 +18,7 @@ package com.robopupu.api.fsm;
 import java.util.HashMap;
 import java.util.HashSet;
 
-/*
+/**
  * {@link StateEngine} is an abstract class that is used in code generation by annotation processor
  * for creating concrete {@link StateEngine} implementations for {@link StateMachine}s. All concrete
  * state classes are derived from the code generated implemetation of {@link StateEngine}.
@@ -26,9 +26,7 @@ import java.util.HashSet;
  */
 public abstract class StateEngine<T_State extends StateEngine> {
 
-    private static final String TAG = StateEngine.class.getSimpleName();
-
-    /*
+    /**
      * {@link Error} defines error types and messages for {@link StateEngine}.
      */
     public enum Error {
@@ -51,62 +49,62 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * A {@link HashMap} containing either 1) the substates of a state if this instance of {@link StateEngine}
      * represents a state or 2) the top-level states if this instance of {@link StateEngine}
      * represents a state machine.
      */
     protected final HashSet<T_State> mSubStates;
 
-    /*
+    /**
      * The current state among the substates of this state.
      */
     protected T_State mCurrentState;
 
-    /*
+    /**
      * A {@link Class} specifying the initial state among the substates of this state.
      */
     protected Class<? extends T_State> mInitialStateClass;
 
-    /*
+    /**
      * A {@link HashMap} used for caching state instances. The {@link Class}es of states can be used
      * as keys to the {@link HashMap}, because each state object has its own {@link Class}.
      */
     protected HashMap<Class<?>, T_State> mStateCache;
 
-    /*
+    /**
      * The reference to an instance of {@link StateEngine} that represents a state machine. All
      * instances of concrete implementations of {@link StateEngine} that represent individual
      * states have a reference to the state machine.
      */
     protected T_State mStateEngine;
 
-    /*
+    /**
      * The class of the super state of the state represented by this instance of {@link StateEngine}.
      * If this instance of {@link StateEngine} is a state machine, then this field has {@code null}
      * value.
      */
     protected Class<? extends T_State> mSuperStateClass;
 
-    /*
+    /**
      * The super state of the state represented by this instance of {@link StateEngine}. If this
      * instance of {@link StateEngine} is a state machine, then this field has {@code null} value.
      */
     protected T_State mSuperState;
 
-    /*
-     * The {@link StateEngineObserver} that receives events from this {@linn StateEngine}.
+    /**
+     * The {@link StateEngineObserver} that receives events from this {@link StateEngine}.
      */
     private StateEngineObserver mObserver;
 
-    /*
+    /**
      * Private default constructor.
      */
     private StateEngine() {
         mSubStates = new HashSet<>();
     }
 
-    /*
+    /**
      * This constructor is to be used by a concrete implementation of {@link StateEngine}.
      *
      * @param initialStateClass The {@link Class} of a state that is the initial state to be entered
@@ -126,7 +124,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         mStateCache.put(getClass(), (T_State) this);
     }
 
-    /*
+    /**
      * This constructor is to be used by all actual state classes which are extended from the concrete
      * implementation of this {@link StateEngine}.
      *
@@ -142,7 +140,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         mSuperStateClass = superStateClass;
     }
 
-    /*
+    /**
      * Gets the {@link StateEngineObserver} assigned for this {@link StateEngine}.
      * @return A {@link StateEngineObserver}.
      */
@@ -154,7 +152,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Sets the {@link StateEngineObserver} assigned for this {@link StateEngine}.
      * @param observer A {@link StateEngineObserver}.
      */
@@ -162,7 +160,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         mObserver = observer;
     }
 
-    /*
+    /**
      * Gets the super state of this state.
      *
      * @param <T> A type parameter for the state type.
@@ -173,18 +171,18 @@ public abstract class StateEngine<T_State extends StateEngine> {
         return (T) mSuperState;
     }
 
-    /*
+    /**
      * Gets the current state of this {@link StateEngine} or state.
      *
      * @param <T> A type parameter for the state type.
      * @return A state object.
      */
     @SuppressWarnings("unchecked")
-    public final <T extends T_State> T getCurrentState() {
+    public final <T extends StateEngine> T getCurrentState() {
         return (T) mCurrentState;
     }
 
-    /*
+    /**
      * Sets the current state of this {@link StateEngine} or state.
      *
      * @param state A state object representing the new current state.
@@ -193,7 +191,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         mCurrentState = state;
     }
 
-    /*
+    /**
      * Gets the reference to a {@link StateEngine}.
      *
      * @return A {@link StateEngine}.
@@ -202,7 +200,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         return mStateEngine;
     }
 
-    /*
+    /**
      * Tests if this instance of {@link StateEngine} represents a state machine and not a state
      * that belongs into it.
      *
@@ -212,7 +210,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         return (this == getStateEngine());
     }
 
-    /*
+    /**
      * Gets an instance of the specified state.
      *
      * @param stateClass A state object {@link Class}.
@@ -244,7 +242,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Causes transition from the current state to the specified state.
      *
      * @param stateClass A {@link Class} specifying the target state for the state transition.
@@ -254,7 +252,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         return transitTo(stateClass, 0);
     }
 
-    /*
+    /**
      * Causes transition from the current state to the specified state optionally via an entry point
      *
      * @param stateClass A {@link Class} specifying the target state for the state transition.
@@ -291,7 +289,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Causes transition from the current state to the specified history state via a deep or
      * shallow history point.
      *
@@ -336,7 +334,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Enters the represented by this instance of {@link StateEngine}. If the state is entered via
      * an entry point the index of the entry point has to be given and it has to be greater than zero.
      *
@@ -359,21 +357,21 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Invoked by {@link StateEngine#exit(StateEngine)}.
      */
     protected void onExit() {
         // By default do nothing
     }
 
-    /*
+    /**
      * Invoked by {@link StateEngine#enter(int)}.
      */
     protected void onEnter() {
         // By default do nothing
     }
 
-    /*
+    /**
      * Enters the specified entry point. If a state implementation has one or more entry points, it
      * has to override this method.
      *
@@ -384,7 +382,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         throw new IllegalStateException(Error.ERROR_UNHANDLED_ENTRY_POINT.getDescription(entryPoint, getClass().getSimpleName()));
     }
 
-    /*
+    /**
      * Enters a deep history point.
      *
      * @return The current state after entering the deep history point.
@@ -402,7 +400,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Enters a shallow history point.
      *
      * @return The current state after entering the shallow history point.
@@ -420,7 +418,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Invoked to exit the state  represented by this instance of {@link StateEngine}. The state
      * machine will enter the given new target state.
      *
@@ -444,7 +442,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Invoked when the specified error has occurred while in the given state.
      *
      * @param state A state object.
@@ -456,8 +454,8 @@ public abstract class StateEngine<T_State extends StateEngine> {
         getObserver().onError(this, error, message);
     }
 
-    /*
-     * /*
+    /**
+     * /**
      * Invoked when the specified error has occurred while in the named event has been received in
      * the given state.
      *
@@ -471,14 +469,14 @@ public abstract class StateEngine<T_State extends StateEngine> {
         getObserver().onError(this, error, message);
     }
 
-    /*
+    /**
      * Invoked by {@link StateEngine#dispose()} for an instance of {@link StateEngine} that
      * represents a state machine.
      */
     protected void onDisposeStateEngine() {
     }
 
-    /*
+    /**
      * Invoked by {@link StateEngine#dispose()} for an instance of {@link StateEngine} that
      * represents a state of a state machine.
      */
@@ -486,7 +484,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         // By default do nothing
     }
 
-    /*
+    /**
      * Disposes this {@link StateEngine} and the all state objects contained by it. The method is
      * recursively invoked to all substates of a each state.
      */
@@ -510,7 +508,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Starts this {@link StateEngine}. When started, the top-level initial state is entered.
      */
     public synchronized final void start() {
@@ -518,7 +516,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         getObserver().onStart(this);
     }
 
-    /*
+    /**
      * Resets this {@link StateEngine}. Resetting clear the cache of state machines. A state machine
      * has to be started again after resetting.
      */
@@ -534,7 +532,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         }
     }
 
-    /*
+    /**
      * Stops this {@link StateEngine}. Stopping causes the state machine and all of its state to be
      * disposed.
      */
@@ -543,7 +541,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         dispose();
     }
 
-    /*
+    /**
      * Tests if the given state object is a direct or an indirect super state of the state
      * represented by this instance of {@link StateEngine}.
      *
@@ -568,7 +566,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
         return false;
     }
 
-    /*
+    /**
      * Tests if the state object represented by this instance of {@link StateEngine} is a direct or
      * an indirect super state of the given state.
      *
@@ -581,7 +579,7 @@ public abstract class StateEngine<T_State extends StateEngine> {
     }
 
 
-    /*
+    /**
      * A {@link String} representation of this {@link StateEngine} is simply the name of the class
      * implementing abstract class {@link StateEngine}.
      *

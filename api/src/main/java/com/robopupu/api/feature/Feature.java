@@ -18,14 +18,13 @@ package com.robopupu.api.feature;
 import com.robopupu.api.dependency.DependencyScope;
 import com.robopupu.api.dependency.DependencyScopeOwner;
 import com.robopupu.api.mvp.PresenterListener;
-import com.robopupu.api.mvp.View;
 import com.robopupu.api.plugin.PluginBus;
 import com.robopupu.api.plugin.PluginComponent;
 import com.robopupu.api.plugin.PluginStateComponent;
 
 import java.util.List;
 
-/*
+/**
  * {@link Feature} defines an interface for {@link PluginStateComponent}s that implement of
  * application feature as a component. A concrete {@link Feature} implementation may implement logic
  * for UI navigation and UI flow logic.<b></b> A {@link Feature}  is also
@@ -33,80 +32,113 @@ import java.util.List;
  */
 public interface Feature extends PresenterListener, PluginStateComponent {
 
-    /*
-     * Gets the currently active {@link View}s.
+    /**
+     * Gets the currently active {@link FeatureView}s.
      *
-     * @return A {@link List} containing the currently active views as {@link View}s.
+     * @return A {@link List} containing the currently active views as {@link FeatureView}s.
      */
-    List<View> getActiveViews();
+    List<FeatureView> getActiveViews();
 
-    /*
-     * Tests if the given {@link View} is currently active one.
+    /**
+     * Tests if the given {@link FeatureView} is currently active one.
      *
-     * @param view A {@link View}.
+     * @param view A {@link FeatureView}.
      * @return A {@code boolean} value.
      */
-    boolean isActiveView(View view);
+    boolean isActiveView(FeatureView view);
 
-    /*
+    /**
+     * Adds the given {@link FeatureView} to the set of currently active {@link FeatureView}s of
+     * this {@link Feature}.
+     * @param view A {@link FeatureView} to be added.
+     * @return The {@link FeatureView} if it was added as a new active {@link FeatureView}.
+     */
+    FeatureView addActiveView(FeatureView view);
+
+    /**
+     * Removes the given {@link FeatureView} from the set of currently active {@link FeatureView}s
+     * of this {@link Feature}.
+     * @param view A {@link FeatureView} to be removed.
+     * @return The {@link FeatureView} if it was removed from being an active {@link FeatureView}.
+     */
+    FeatureView removeActiveView(FeatureView view);
+
+    /**
+     * Sets the {@link FeatureManager} that started this {@link Feature}.
+     *
+     * @param manager A {@link FeatureManager}.
+     */
+    void setFeatureManager(FeatureManager manager);
+
+    /**
+     * Gets the {@link FeatureContainer} that hosts the {@code FeatureCompatFragment}s of this
+     * {@link Feature}.
+     *
+     * @return A {@link FeatureContainer}.
+     */
+    FeatureContainer getFeatureContainer();
+
+    /**
+     * Sets the the {@link FeatureContainer} that hosts the {@code FeatureCompatFragment}s of this
+     * {@link Feature}.
+     *
+     * @param container A {@link FeatureContainer}.
+     */
+    void setFeatureContainer(FeatureContainer container);
+
+    /**
      * Sets this {@link Feature} to be an Activity Feature that is owned and controlled by
-     * an {@linx Activity}.
+     * an {@code Activity}.
      * @param isActivityFeature A {@code boolean} value.
      */
     void setActivityFeature(boolean isActivityFeature);
 
-    /*
+    /**
      * Tests if this {@link Feature} is set to be an Activity Feature that is owned and controlled
-     * by an {@linx Activity}.
+     * by an {@code Activity}.
      * @return  A {@code boolean} value.
      */
     boolean isActivityFeature();
 
-    /*
-     * Tests if any of the {@link View}s of this {@link Feature} is in foreground and has a focus.
-     * @return A {@code boolean}.
-     */
-    boolean hasFocusedView();
-
-    /*
+    /**
      * Tests if this {@link Feature} is in foreground i.e. it has at least one visible
-     * {@link View}.
+     * {@link FeatureView}.
      *
      * @return A {@code boolean} value.
      */
     boolean hasForegroundView();
 
-    /*
+    /**
      * Tests if this {@link Feature} handles the back pressed event.
      *
      * @return A {@code boolean} value.
      */
     boolean isBackPressedEventHandler();
 
-    /*
-     * Tests if this {@link Feature} has any {@link View}s in back stack.
+    /**
+     * Tests if this {@link Feature} has any {@link FeatureView}s in back stack.
      * @return A {@code boolean} value.
      */
-    boolean hasViewsInBackStack();
+    boolean hasBackStackViews();
 
-    /*
-     * Clears the back stack managed by {@linx FragmentManager}.
+    /**
+     * Clears the back stack managed by {@code FragmentManager}.
      */
     void clearBackStack();
 
-    /*
-     * Tests if the previous {@link View} can be navigated back to.
+    /**
+     * Tests if the previous {@link FeatureView} can be navigated back to.
      *
      * @return A {@code boolean} value.
      */
     boolean canGoBack();
 
-    /*
-     * Goes back to previous {@link View}.
+    /**
+     * Goes back to previous {@link FeatureView}.
      */
     void goBack();
 
-    /*
+    /**
      * Invoked to pause this {@link Feature}.
      *
      * @param finishing A {@code boolean} value indicating if the {@link Feature} is
@@ -114,10 +146,40 @@ public interface Feature extends PresenterListener, PluginStateComponent {
      */
     void pause(boolean finishing);
 
-    /*
+    /**
      * Finishes this {@link Feature}. A finished {@link Feature} is stopped and destroyed.
      * If a {@link Feature} is implements a {@link PluginComponent} it is
      * unplugged from a {@link PluginBus}.
      */
     void finish();
+
+    /**
+     * Invoked when a {@link FeatureContainer} has been started.
+     *
+     * @param container A {@link FeatureContainer}.
+     */
+    void onFeatureContainerStarted(FeatureContainer container);
+
+    /**
+     * Invoked when a {@link FeatureContainer} has been paused.
+     *
+     * @param container A {@link FeatureContainer}.
+     * @param finishing A {@code boolean} flag indicating if the {@link FeatureContainer} is finishing.
+     */
+    void onFeatureContainerPaused(FeatureContainer container, boolean finishing);
+
+    /**
+     * Invoked when a {@link FeatureContainer} has been resumed.
+     *
+     * @param container A {@link FeatureContainer}.
+     */
+    void onFeatureContainerResumed(FeatureContainer container);
+
+    /**
+     * Invoked when a {@link FeatureContainer} has been stopped.
+     *
+     * @param container A {@link FeatureContainer}.
+     * @param finishing A {@code boolean} flag indicating if the {@link FeatureContainer} is finishing.
+     */
+    void onFeatureContainerStopped(FeatureContainer container, boolean finishing);
 }
