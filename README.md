@@ -20,8 +20,12 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 ## Installation
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
-## Changelog
-The current version is 0.3.1.
+### 0.4.4
+* Updated the compiler to support Robopupu APIs version 0.4.4
+* Fixed a bug in annotation processor for Dependency API when a DependencyScope does not have any declared @Provides annotated methods, classes, nor constructors.
+
+### 0.3.1
+* Initial open source release
 
 ## License
 ```
