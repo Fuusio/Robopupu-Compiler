@@ -1,6 +1,6 @@
 # Robopupu Compiler
 
-<img src="https://github.com/Fuusio/Robopupu/blob/master/images/robopupu_header_image.png" alt="robopupu mascot"/>
+<img src="https://github.com/Fuusio/Robopupu/blob/gh-pages/images/robopupu_header_image.png" alt="Robopupu mascot"/>
 
 An Android library that provides a set of annotation processors used for generating code for the following **Robopupu APIs**:
 
