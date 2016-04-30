@@ -1,5 +1,6 @@
 package com.robopupu.compiler.dependency;
 
+import com.robopupu.api.dependency.DependencyQuery;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -32,6 +33,7 @@ public class DependencyProviderClass {
 
     private static final String SUFFIX_DEPENDENCY_PROVIDER = "_DependencyProvider";
     private static final ClassName CLASS_DEPENDENCY_PROVIDER = ClassName.get(DependencyProvider.class);
+    private static final ClassName CLASS_DEPENDENCY_QUERY = ClassName.get(DependencyQuery.class);
 
     private final String mClassName;
     private final TypeElement mClassElement;
@@ -93,48 +95,40 @@ public class DependencyProviderClass {
         final AnnotationSpec.Builder annotationBuilder = AnnotationSpec.builder(SuppressWarnings.class);
         annotationBuilder.addMember("value", "\"unchecked\"");
 
-        final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("getDependency");
+        final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("getDependencies");
         methodBuilder.addModifiers(Modifier.PROTECTED);
         methodBuilder.addAnnotation(Override.class);
         methodBuilder.addAnnotation(annotationBuilder.build());
 
-        final ParameterizedTypeName parameterizedType = ParameterizedTypeName.get(ClassName.get(Class.class), TypeVariableName.get("T"));
-        methodBuilder.addParameter(parameterizedType, "dependencyType", Modifier.FINAL);
-        methodBuilder.returns(TypeVariableName.get("<T> T"));
-
-        boolean isFirstCondition = true;
+        final ParameterizedTypeName parameterizedType = ParameterizedTypeName.get(CLASS_DEPENDENCY_QUERY, TypeVariableName.get("T"));
+        methodBuilder.addParameter(parameterizedType, "query", Modifier.FINAL);
+        methodBuilder.returns(TypeVariableName.get("<T> void"));
 
         for (final ProviderClass providerClass : mProviderClasses) {
 
             final String returnType = providerClass.getProvidedType();
 
-            if (isFirstCondition) {
-                isFirstCondition = false;
-                methodBuilder.beginControlFlow(String.format("if (dependencyType.isAssignableFrom(%s.class))", returnType));
-            } else {
-                methodBuilder.nextControlFlow(String.format("else if (dependencyType.isAssignableFrom(%s.class))", returnType));
-            }
+            methodBuilder.beginControlFlow(String.format("if (query.matches(%s.class))", returnType));
 
             final JavaWriter writer = new JavaWriter();
 
-            writer.k(com.robopupu.compiler.util.Keyword.RETURN).a("(T) new ");
+            writer.a("if (query.add((T) new ");
 
             final String providerType = providerClass.getTypeElement().toString();
 
-            writer.a(providerType).a("()");
-            methodBuilder.addStatement(writer.getCode());
+            writer.a(providerType).a("()))");
+
+            methodBuilder.beginControlFlow(writer.getCode());
+            methodBuilder.addStatement(Keyword.RETURN.toString());
+            methodBuilder.endControlFlow();
+            methodBuilder.endControlFlow();
         }
 
         for (final ProviderMethod providerMethod : mProviderMethods) {
 
             final String returnType = providerMethod.getProvidedType();
 
-            if (isFirstCondition) {
-                isFirstCondition = false;
-                methodBuilder.beginControlFlow(String.format("if (dependencyType.isAssignableFrom(%s.class))", returnType));
-            } else {
-                methodBuilder.nextControlFlow(String.format("else if (dependencyType.isAssignableFrom(%s.class))", returnType));
-            }
+            methodBuilder.beginControlFlow(String.format("if (query.matches(%s.class))", returnType));
 
             final JavaWriter writer = new JavaWriter();
 
@@ -149,7 +143,8 @@ public class DependencyProviderClass {
                     methodBuilder.addStatement(writer.getCode(), D.class);
                 }
 
-                writer.c().k(com.robopupu.compiler.util.Keyword.RETURN).a("(T) ((").a(providerMethod.getDependencyScopeType());
+                writer.c().a("if (query.add((T) ((");
+                writer.a(providerMethod.getDependencyScopeType());
                 writer.a(")mScope).").a(providerMethod.getMethodName()).a("(");
 
                 int index = 0;
@@ -161,24 +156,25 @@ public class DependencyProviderClass {
                     }
                     writer.a(parameter.getSimpleName().toString());
                 }
-                writer.a(")");
+                writer.a(")))");
             } else {
-                writer.k(Keyword.RETURN).a("(T) ((").a(providerMethod.getDependencyScopeType());
-                writer.a(")mScope).").a(providerMethod.getMethodName()).a("()");
+                writer.c().a("if (query.add((T) ((");
+
+                writer.a(providerMethod.getDependencyScopeType());
+                writer.a(")mScope).").a(providerMethod.getMethodName()).a("()))");
             }
-            methodBuilder.addStatement(writer.getCode());
+
+            methodBuilder.beginControlFlow(writer.getCode());
+            methodBuilder.addStatement(Keyword.RETURN.toString());
+            methodBuilder.endControlFlow();
+            methodBuilder.endControlFlow();
         }
 
         for (final ProviderConstructor providerConstructor : mProviderConstructors) {
 
             final String returnType = providerConstructor.getProvidedType();
 
-            if (isFirstCondition) {
-                isFirstCondition = false;
-                methodBuilder.beginControlFlow(String.format("if (dependencyType.isAssignableFrom(%s.class))", returnType));
-            } else {
-                methodBuilder.nextControlFlow(String.format("else if (dependencyType.isAssignableFrom(%s.class))", returnType));
-            }
+            methodBuilder.beginControlFlow(String.format("if (query.matches(%s.class))", returnType));
 
             final JavaWriter writer = new JavaWriter();
 
@@ -193,7 +189,7 @@ public class DependencyProviderClass {
                     methodBuilder.addStatement(writer.getCode(), D.class);
                 }
 
-                writer.c().k(com.robopupu.compiler.util.Keyword.RETURN).a("(T) new ");
+                writer.c().a("if (query.add((T) new ");
                 writer.a(providerConstructor.getConstructorName()).a("(");
 
                 int index = 0;
@@ -205,16 +201,17 @@ public class DependencyProviderClass {
                     }
                     writer.a(parameter.getSimpleName().toString());
                 }
-                writer.a(")");
+                writer.a(")))");
             } else {
-                writer.k(com.robopupu.compiler.util.Keyword.RETURN).a("(T) new ");
-                writer.a(providerConstructor.getConstructorName()).a("()");
+                writer.c().a("if (query.add((T) new ");
+                writer.a(providerConstructor.getConstructorName()).a("()))");
             }
-            methodBuilder.addStatement(writer.getCode());
-        }
 
-        methodBuilder.endControlFlow();
-        methodBuilder.addStatement("return null");
+            methodBuilder.beginControlFlow(writer.getCode());
+            methodBuilder.addStatement(Keyword.RETURN.toString());
+            methodBuilder.endControlFlow();
+            methodBuilder.endControlFlow();
+        }
         return methodBuilder.build();
     }
 

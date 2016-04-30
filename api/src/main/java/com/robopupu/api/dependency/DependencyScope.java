@@ -19,9 +19,10 @@ import com.robopupu.api.plugin.PluginBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
-/*
+/**
  * {@link DependencyScope} provides an abstract base class for implementing objects that provide
  * and cache a scoped dependencies. An instance of a concrete implementation of {@link DependencyScope}
  * is not used directly to access dependencies, but via the static methods of class {@link Dependency}
@@ -40,9 +41,9 @@ public abstract class DependencyScope {
     /*
      * A cache of created and provided dependencies.
      */
-    protected final HashMap<Class, Object> mDependencies;
+    protected final HashMap<Class<?>, Object> mDependencies;
 
-    /*
+    /**
      * A reference to an optional overriding {@link DependencyScope} used providing mock dependencies.
      */
     protected DependencyScope mMockScope;
@@ -73,7 +74,7 @@ public abstract class DependencyScope {
     /*
      * A helper field for storing the currently requested type of dependency.
      */
-    private Class mDependencyType;
+    private Class<?> mDependencyType;
 
     protected DependencyScope() {
         mDependencies = new HashMap<>();
@@ -81,7 +82,7 @@ public abstract class DependencyScope {
         mInitialized = false;
     }
 
-    /*
+    /**
      * Gets the {@link DependencyProvider}. A {@link DependencyProvider} is either code generated
      * by the annotation processor of Fuusio API Compiler or explicitly created by method
      * {@link DependencyScope#createDependencyProvider()}.
@@ -97,7 +98,7 @@ public abstract class DependencyScope {
         return mDependencyProvider;
     }
 
-    /*
+    /**
      * Gets the identifier of this {@link DependencyScope}. The default identifier is the canonical
      * class name of the {@link DependencyScope}.
      *
@@ -107,7 +108,7 @@ public abstract class DependencyScope {
         return getClass().getCanonicalName();
     }
 
-    /*
+    /**
      * Get the {@link DependencyScopeOwner} that manages the lifecycle this {@link DependencyScope}.
      *
      * @return A {@link DependencyScopeOwner}.
@@ -116,7 +117,7 @@ public abstract class DependencyScope {
         return mOwner;
     }
 
-    /*
+    /**
      * Set the {@link DependencyScopeOwner} that manages the lifecycle this {@link DependencyScope}.
      *
      * @param owner A {@link DependencyScopeOwner}.
@@ -125,7 +126,7 @@ public abstract class DependencyScope {
         mOwner = owner;
     }
 
-    /*
+    /**
      * Gets the parent {@link DependencyScope}.
      *
      * @return A {@link DependencyScope}. May return {@code null} if the parent is not set.
@@ -134,7 +135,7 @@ public abstract class DependencyScope {
         return mParentScope;
     }
 
-    /*
+    /**
      * Sets the parent {@link DependencyScope}.
      *
      * @param parent A {@link DependencyScope}. May be {@code null}.
@@ -143,7 +144,7 @@ public abstract class DependencyScope {
         mParentScope = parent;
     }
 
-    /*
+    /**
      * Gets the {@link DependencyScope} that overrides this {@link DependencyScope}. An overriding
      * {@link DependencyScope} can be used for providing mock dependencies for unit tests.
      *
@@ -153,7 +154,7 @@ public abstract class DependencyScope {
         return mMockScope;
     }
 
-    /*
+    /**
      * Sets the given {@link DependencyScope} to override this {@link DependencyScope}. An overriding
      * {@link DependencyScope} can be used for providing mock dependencies for unit tests.
      *
@@ -163,7 +164,7 @@ public abstract class DependencyScope {
         mMockScope = scope;
     }
 
-    /*
+    /**
      * Tests if this {@link DependencyScope} can be disposed.
      *
      * @return A {@code boolean} value.
@@ -172,7 +173,7 @@ public abstract class DependencyScope {
         return true;
     }
 
-    /*
+    /**
      * Adds the given {@link Object} as a dependant to this {@link DependencyScope}.
      *
      * @param dependant An {@link Object}.
@@ -181,7 +182,7 @@ public abstract class DependencyScope {
         mDependants.add(dependant);
     }
 
-    /*
+    /**
      * Tests if the specified type represents the requested dependency type.
      *
      * @param dependencyType A {@link Class} specifying the type of the requested dependency.
@@ -192,7 +193,7 @@ public abstract class DependencyScope {
         return mDependencyType.isAssignableFrom(dependencyType);
     }
 
-    /*
+    /**
      * Caches the requested dependency {@link Object} before it is returned to a requester.
      *
      * @param dependency The requested dependency {@link Object} to be cached.
@@ -221,7 +222,7 @@ public abstract class DependencyScope {
         }
     }
 
-    /*
+    /**
      * Caches the given requested dependency {@link Object} using the requested type as a key.
      *
      * @param dependencyType The dependence type as a {@link Class} used as a key.
@@ -230,16 +231,25 @@ public abstract class DependencyScope {
      * @return The cached dependency {@link Object}.
      */
     @SuppressWarnings("unchecked")
-    public <T> T cache(final Class<T> dependencyType, final Object dependency) {
+    protected <T> T cache(final Class<T> dependencyType, final Object dependency) {
         if (dependency != null) {
             mDependencies.put(dependencyType, dependency);
+
+            if (dependency instanceof Scopeable) {
+                ((Scopeable) dependency).setScope(this);
+            }
+
+            if (dependency instanceof DependencyScopeOwner && mOwner == null) {
+                setOwner((DependencyScopeOwner) dependency);
+            }
+
             return (T) dependency;
         } else {
             throw new IllegalArgumentException("Parameter 'dependency' may not be null");
         }
     }
 
-    /*
+    /**
      * This method is meant to be implemented by each concrete implementation of {@link DependencyScope}.
      * The requested dependency instance is returned by the implementation, if it is capable of providing
      * a such instance. The implementation of this method should not delegate the request to any other
@@ -255,7 +265,7 @@ public abstract class DependencyScope {
         return null;
     }
 
-    /*
+    /**
      * Gets an dependency instance of the specified type. The requested dependency is first searched
      * from the currently active {@link DependencyScope}. If a requested instance is not found the search
      * is delegated to parent {@link DependencyScope}. As a last attempt,
@@ -272,8 +282,7 @@ public abstract class DependencyScope {
      */
     @SuppressWarnings("unchecked")
     protected <T> T getDependency(final Class<T> dependencyType, final Object dependant, final boolean createNew) {
-
-        final Class savedDependencyType = mDependencyType;
+        final Class<?> savedDependencyType = mDependencyType;
 
         mDependencyType = dependencyType;
 
@@ -282,6 +291,14 @@ public abstract class DependencyScope {
         }
 
         T dependency = (T) mDependencies.get(dependencyType);
+
+        if (dependency == null) {
+            for (final Class<?> key : mDependencies.keySet()) {
+                if (dependencyType.isAssignableFrom(key)) {
+                    dependency = (T) mDependencies.get(key);
+                }
+            }
+        }
 
         if (dependency == null) {
             dependency = lookDependencyAmongDependants(dependencyType);
@@ -296,20 +313,17 @@ public abstract class DependencyScope {
 
                     if (dependency == null) {
                         if (getDependencyProvider() != null) {
-                            dependency = mDependencyProvider.getDependency(dependencyType);
+                            final DependencyQuery<T> query = DependencyQuery.find(dependencyType);
+                            mDependencyProvider.getDependencies(query);
+
+                            if (query.foundDependencies()) {
+                                dependency = query.getFoundDependency();
+                            }
                         }
                     }
 
                     if (dependency != null) {
                         cache(dependencyType, dependency);
-
-                        if (dependency instanceof Scopeable) {
-                            ((Scopeable) dependency).setScope(this);
-                        }
-
-                        if (dependency instanceof DependencyScopeOwner && mOwner == null) {
-                            setOwner((DependencyScopeOwner) dependency);
-                        }
                     }
                 }
 
@@ -334,14 +348,6 @@ public abstract class DependencyScope {
 
                         if (dependency != null) {
                             cache(dependencyType, dependency);
-
-                            if (dependency instanceof Scopeable) {
-                                ((Scopeable) dependency).setScope(this);
-                            }
-
-                            if (dependency instanceof DependencyScopeOwner && mOwner == null) {
-                                setOwner((DependencyScopeOwner) dependency);
-                            }
                         }
                     }
                 }
@@ -351,14 +357,88 @@ public abstract class DependencyScope {
         return dependency;
     }
 
+    /**
+     * Gets an dependency instance of the specified type. The requested dependency is first searched
+     * from the currently active {@link DependencyScope}. If a requested instance is not found the search
+     * is delegated to parent {@link DependencyScope}. As a last attempt,
+     * the {@code AppDependencyScope} is searched.
+     *
+     * @param dependencies A {@link HashSet} for storing found dependencies.
+     * @param dependencyType A {@link Class} specifying the type of the requested instance.
+     * @param dependant      The requesting object. This parameter is required when the requesting dependant
+     *                       is also a requested within the object graph represented by a {@link DependencyScope}.
+     * @param <T>            A type parameter for casting the requested instance to expected type.
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> void getDependencies(final HashSet<T> dependencies, final Class<T> dependencyType, final Object dependant) {
 
-    /*
+        final Class<?> savedDependencyType = mDependencyType;
+
+        mDependencyType = dependencyType;
+
+        if (dependant != null) {
+            mDependants.add(dependant);
+        }
+
+        for (final Class<?> key : mDependencies.keySet()) {
+            if (dependencyType.isAssignableFrom(key)) {
+                final T dependency = (T) mDependencies.get(key);
+
+                if (dependency != null) {
+                    dependencies.add(dependency);
+                }
+            }
+        }
+
+        lookDependenciesAmongDependants(dependencies, dependencyType);
+
+        if (mMockScope != null) {
+            mMockScope.getDependencies(dependencies, dependencyType, dependant);
+        } else {
+            final T dependency = getDependency();
+
+            if (dependency == null) {
+                dependencies.add(dependency);
+            }
+
+            if (getDependencyProvider() != null) {
+                final DependencyQuery<T> query = DependencyQuery.find(dependencyType);
+                mDependencyProvider.getDependencies(query);
+
+                if (query.foundDependencies()) {
+                    dependencies.addAll(query.getFoundDependencies());
+                }
+            }
+
+            if (!dependencies.isEmpty()) {
+                for (final T foundDependency : dependencies) {
+                    cache(dependencyType, foundDependency);
+                }
+            }
+
+            if (mParentScope != null) {
+                final HashSet<T> parentScopeDependencies = new HashSet<>();
+                mParentScope.getDependencies(parentScopeDependencies, dependencyType, null);
+                dependencies.addAll(parentScopeDependencies);
+            }
+
+            if (!isAppScope()) {
+                final HashSet<T> appScopeDependencies = new HashSet<>();
+                Dependency.getAppScope().getDependencies(appScopeDependencies, dependencyType, dependant);
+                dependencies.addAll(appScopeDependencies);
+            }
+        }
+        mDependencyType = savedDependencyType;
+    }
+
+    /**
      * Checks it the requested dependency is one of the cached dependent instances.
      *
      * @param dependencyType A {@link Class} specifying the type of the requested dependency.
      * @param <T>            A type parameter for casting the requested dependency to expected type.
      * @return The found requested instance or {@code null}.
      */
+    @SuppressWarnings("unchecked")
     private <T> T lookDependencyAmongDependants(final Class<T> dependencyType) {
 
         for (int i = mDependants.size() - 1; i >= 0; i--) {
@@ -372,7 +452,30 @@ public abstract class DependencyScope {
         return null;
     }
 
-    /*
+    /**
+     * Checks it the requested dependency is one of the cached dependent instances.
+     *
+     * @param dependencies A {@link HashSet} for storing found dependencies.
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return The found requested instance or {@code null}.
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T lookDependenciesAmongDependants(final HashSet<T> dependencies, final Class<T> dependencyType) {
+
+        for (int i = mDependants.size() - 1; i >= 0; i--) {
+            final Object dependant = mDependants.get(i);
+
+            if (dependencyType.isAssignableFrom(dependant.getClass())) {
+                mDependants.remove(dependant);
+                dependencies.add((T) dependant);
+                return cache(dependencyType, dependant);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Disposes this {@link DependencyScope} to support effective GC and to avoid memory leaks.
      */
     protected void dispose() {
@@ -396,7 +499,7 @@ public abstract class DependencyScope {
         }
     }
 
-    /*
+    /**
      * Tests if this {@link DependencyScope} is a application scoped {@link DependencyScope}.
      *
      * @return A {@code boolean},
@@ -405,7 +508,7 @@ public abstract class DependencyScope {
         return false;
     }
 
-    /*
+    /**
      * This method is invoked by {@link Dependency} when this {@link DependencyScope} is activated
      * for the given {@link DependencyScopeOwner}.
      *
@@ -415,7 +518,7 @@ public abstract class DependencyScope {
         // By default do nothing
     }
 
-    /*
+    /**
      * This method is invoked by {@link Dependency} when this {@link DependencyScope} is deactivated
      * for the given {@link DependencyScopeOwner}.
      *
@@ -425,7 +528,7 @@ public abstract class DependencyScope {
         // By default do nothing
     }
 
-    /*
+    /**
      * Invoked to initialize this {@link DependencyScope}.
      */
     @SuppressWarnings("unchecked")
@@ -443,13 +546,13 @@ public abstract class DependencyScope {
                     mDependencyProvider = dependencyProviderClass.newInstance();
                     mDependencyProvider.setScope(this);
                 } catch (Exception e) {
-                    // Log.d(TAG, "initialize() " + e.getMessage());
+                    //Log.d(TAG, "initialize() " + e.getMessage());
                 }
             }
         }
     }
 
-    /*
+    /**
      * This method can be overridden in extending classes to provide a method that explicitly
      * instantiates a {@link DependencyProvider} for this {@link DependencyScope}. By default this
      * method returns {@code null}. If this method returns a {@code null}, then an instance of
@@ -461,7 +564,7 @@ public abstract class DependencyScope {
         return null;
     }
 
-    /*
+    /**
      * Removes the given dependency from this {@link DependencyScope}.
      *
      * @param dependency The dependency to be removed as an {@link Object}.
@@ -484,7 +587,7 @@ public abstract class DependencyScope {
         return removedDependencyTypes;
     }
 
-    /*
+    /**
      * Tests if given dependency exists in this {@link DependencyScope}.
      *
      * @param dependency The dependency as an {@link Object}.
@@ -493,7 +596,7 @@ public abstract class DependencyScope {
         return mDependencies.containsValue(dependency);
     }
 
-    /*
+    /**
      * Tests if an instance of the specified dependency type exists in this {@link DependencyScope}.
      *
      * @param dependencyType A {@link Class} specifying the dependency type.

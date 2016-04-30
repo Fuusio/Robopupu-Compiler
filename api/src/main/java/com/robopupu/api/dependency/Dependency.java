@@ -16,10 +16,12 @@
 package com.robopupu.api.dependency;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
-/*
+/**
  * {@link Dependency} implements a manager that is used to manage {@link DependencyScope}
  * instances. It provides a static API with methods for activating and deactivating
  * {@link DependencyScope} instances.
@@ -28,22 +30,22 @@ public class Dependency {
 
     private final static String TAG = Dependency.class.getSimpleName();
 
-    /*
+    /**
      * A {@link DependencyScope} that has the same lifecycle as the application.
      */
     private static DependencyScope sAppScope;
 
-    /*
+    /**
      * A {@link HashMap} containing the instantiated {@link DependencyScope}s.
      */
     private final static HashMap<String, DependencyScope> sDependencyScopes = new HashMap<>();
 
-    /*
+    /**
      * The currently active {@link DependencyScope}.
      */
     private static DependencyScope sActiveScope = null;
 
-    /*
+    /**
      * Adds the {@link DependencyScope} owner by the given {@link DependencyScopeOwner} to
      * the {@link HashMap} of the current {@link DependencyScope}s.
      *
@@ -57,7 +59,7 @@ public class Dependency {
         return scope;
     }
 
-    /*
+    /**
      * Gets a {@link DependencyScope} managed by the given {@link DependencyScopeOwner}.
      *
      * @param owner A {@link DependencyScopeOwner}.
@@ -77,7 +79,7 @@ public class Dependency {
         return scope;
     }
 
-    /*
+    /**
      * Gets a {@link DependencyScope} specified by the given canonical class name.
      *
      * @param scopeClassName The canonical name of the {@link DependencyScope}.
@@ -104,7 +106,7 @@ public class Dependency {
         return scope;
     }
 
-    /*
+    /**
      * Gets a specified {@link DependencyScope}.
      *
      * @param scopeClass A {@link Class} specifying {@link DependencyScope}.
@@ -116,7 +118,7 @@ public class Dependency {
         return getScope(scopeClass, true);
     }
 
-    /*
+    /**
      * Gets a specified {@link DependencyScope}.
      *
      * @param scopeClass A {@link Class} specifying {@link DependencyScope}.
@@ -147,7 +149,7 @@ public class Dependency {
         return (T)scope;
     }
 
-    /*
+    /**
      * Gets the application level {@link DependencyScope}.
      * @return A {@link DependencyScope}.
      */
@@ -155,14 +157,14 @@ public class Dependency {
         return sAppScope;
     }
 
-    /*
+    /**
      * Gets the {@link DependencyScope} that is set to be currently the active one. Note that only
      * one {@link DependencyScope} can be active at any given. If no {@link DependencyScope} is
      * set to be active, the application level {@link DependencyScope} is returned.
      *
      * @return A {@link DependencyScope}. May not return {@code null}.
      */
-    // @NonNull
+    //@NonNull
     public static DependencyScope getActiveScope() {
         if (sActiveScope != null) {
             return sActiveScope;
@@ -170,7 +172,7 @@ public class Dependency {
         return sAppScope;
     }
 
-    /*
+    /**
      * Sets the application level {@link DependencyScope}.
      * @param appScope A {@link DependencyScope}.
      */
@@ -181,7 +183,7 @@ public class Dependency {
         sAppScope = appScope;
     }
 
-    /*
+    /**
      * Activates a {@link DependencyScope} for the given {@link DependencyScopeOwner}.
      * The active {@link DependencyScope} is used for resolving dependencies. Setting the currently
      * active {@link DependencyScope} is not thread safe. Therefore this method can be invoked
@@ -206,7 +208,7 @@ public class Dependency {
         }
     }
 
-    /*
+    /**
      * Activates the given {@link DependencyScope} for the given {@link DependencyScopeOwner}.
      * The active {@link DependencyScope} is used for resolving dependencies. Setting the currently
      * active {@link DependencyScope} is not thread safe. Therefore this method can be invoked
@@ -238,7 +240,7 @@ public class Dependency {
         activateScope(owner);
     }
 
-    /*
+    /**
      * Deactivates a {@link DependencyScope} managed by the given {@link DependencyScopeOwner}.
      * When a {@link DependencyScope} is deactivated it is also disposed if disposing is allowed
      * for the deactivated {@link DependencyScope}.
@@ -249,7 +251,7 @@ public class Dependency {
         disposeScope(owner);
     }
 
-    /*
+    /**
      * Disposes the {@link DependencyScope} of the given {@link DependencyScopeOwner}.
      *
      * @param owner A {@link DependencyScopeOwner}.
@@ -271,7 +273,7 @@ public class Dependency {
         }
     }
 
-    /*
+    /**
      * Invoked to dispose all the registered {@link DependencyScope}s.
      */
     public static void disposeScopes() {
@@ -285,8 +287,8 @@ public class Dependency {
         resetActiveScope();
     }
 
-    /*
-     * Gets a requested dependency of the specified type. The dependency is requested from
+    /**
+     * Gets a dependency of the specified type. The dependency is requested from
      * the currently active {@link DependencyScope}.
      *
      * @param dependencyType A {@link Class} specifying the type of the requested dependency.
@@ -298,8 +300,8 @@ public class Dependency {
         return getActiveScope().getDependency(dependencyType, null, false);
     }
 
-    /*
-     * Gets a requested dependency of the specified type. The dependency is requested from
+    /**
+     * Gets a dependency of the specified type. The dependency is requested from
      * the given {@link DependencyScope}.
      *
      * @param scopeType A {@link Class} specifying {@link DependencyScope}.
@@ -312,8 +314,8 @@ public class Dependency {
         return get(scopeType, dependencyType, null);
     }
 
-    /*
-     * Gets a requested dependency of the specified type. The dependency is requested from
+    /**
+     * Gets a dependency of the specified type. The dependency is requested from
      * the specified {@link DependencyScope}.
      *
      * @param scopeClass A {@link Class} specifying {@link DependencyScope}.
@@ -333,8 +335,8 @@ public class Dependency {
         return null;
     }
 
-    /*
-     * Gets a requested dependency of the specified type. The dependency is requested from
+    /**
+     * Gets a dependency of the specified type. The dependency is requested from
      * the given {@link DependencyScope}.
      *
      * @param scope A {@link DependencyScope}.
@@ -347,8 +349,8 @@ public class Dependency {
         return scope.getDependency(dependencyType, null, false);
     }
 
-    /*
-     * Gets a requested dependency of the specified type. The dependency is requested from
+    /**
+     * Gets a dependency of the specified type. The dependency is requested from
      * the currently active {@link DependencyScope}.
      *
      * @param dependencyType A {@link Class} specifying the type of the requested dependency.
@@ -362,8 +364,8 @@ public class Dependency {
         return getActiveScope().getDependency(dependencyType, dependant, false);
     }
 
-    /*
-     * Gets a requested dependency of the specified type. The dependency is requested from
+    /**
+     * Gets a dependency of the specified type. The dependency is requested from
      * the currently active {@link DependencyScope}.
      *
      * @param scope A {@link DependencyScope}.
@@ -378,7 +380,111 @@ public class Dependency {
         return scope.getDependency(dependencyType, dependant, false);
     }
 
-    /*
+////////////////
+
+    /**
+     * Gets all dependencies of the specified type. The dependencies are requested from
+     * the currently active {@link DependencyScope}.
+     *
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
+     * it indicates an error in an {@link DependencyScope} implementation or configuration.
+     */
+    public static <T> Collection<T> getAll(final Class<T> dependencyType) {
+        final HashSet<T> dependencies = new HashSet<>();
+        getActiveScope().getDependencies(dependencies, dependencyType, null);
+        return dependencies;
+    }
+
+    /**
+     * Gets all dependency of the specified type. The dependencies are requested from
+     * the given {@link DependencyScope}.
+     *
+     * @param scopeType A {@link Class} specifying {@link DependencyScope}.
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
+     * it indicates an error in an {@link DependencyScope} implementation or configuration.
+     */
+    public static <T> Collection<T> getAll(final Class<? extends DependencyScope> scopeType, final Class<T> dependencyType) {
+        return getAll(scopeType, dependencyType, null);
+    }
+
+    /**
+     * Gets all dependencies of the specified type. The dependencies are requested from
+     * the specified {@link DependencyScope}.
+     *
+     * @param scopeClass A {@link Class} specifying {@link DependencyScope}.
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param dependant      The object requesting the requested. This parameter is required when the requesting object
+     *                       is also a requested within the object graph represented by the active {@link Dependency}.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
+     * it indicates an error in an {@link DependencyScope} implementation or configuration.
+     */
+    public static <T> Collection<T> getAll(final Class<? extends DependencyScope> scopeClass, final Class<T> dependencyType, final Object dependant) {
+        DependencyScope scope = getScope(scopeClass, true);
+        final HashSet<T> dependencies = new HashSet<>();
+
+        if (scope != null) {
+            scope.getDependencies(dependencies, dependencyType, dependant);
+        }
+        return dependencies;
+    }
+
+    /**
+     * Gets all dependencies of the specified type. The dependencies are requested from
+     * the given {@link DependencyScope}.
+     *
+     * @param scope A {@link DependencyScope}.
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
+     * it indicates an error in an {@link DependencyScope} implementation or configuration.
+     */
+    public static <T> Collection<T> getAll(final DependencyScope scope, final Class<T> dependencyType) {
+        final HashSet<T> dependencies = new HashSet<>();
+        scope.getDependencies(dependencies, dependencyType, null);
+        return dependencies;
+    }
+
+    /**
+     * Gets all dependencies of the specified type. The dependencies are requested from
+     * the currently active {@link DependencyScope}.
+     *
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param dependant      The object requesting the requested. This parameter is required when the requesting object
+     *                       is also a requested within the object graph represented by the active {@link Dependency}.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
+     * it indicates an error in an {@link DependencyScope} implementation or configuration.
+     */
+    public static <T> Collection<T> getAll(final Class<T> dependencyType, final Object dependant) {
+        final HashSet<T> dependencies = new HashSet<>();
+        getActiveScope().getDependencies(dependencies, dependencyType, dependant);
+        return dependencies;
+    }
+
+    /**
+     * Gets all dependencies of the specified type. The dependencies are requested from
+     * the currently active {@link DependencyScope}.
+     *
+     * @param scope A {@link DependencyScope}.
+     * @param dependencyType A {@link Class} specifying the type of the requested dependency.
+     * @param dependant      The object requesting the requested. This parameter is required when the requesting object
+     *                       is also a requested within the object graph represented by the active {@link Dependency}.
+     * @param <T>            A type parameter for casting the requested dependency to expected type.
+     * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
+     * it indicates an error in an {@link DependencyScope} implementation or configuration.
+     */
+    public static <T> Collection<T> getAll(final DependencyScope scope, final Class<T> dependencyType, final Object dependant) {
+        final HashSet<T> dependencies = new HashSet<>();
+        scope.getDependencies(dependencies, dependencyType, dependant);
+        return dependencies;
+    }
+
+    /**
      * This method resets the application level {@link DependencyScope} to {@code null}.
      * This method is added only for testing purposes.
      */
@@ -386,7 +492,7 @@ public class Dependency {
         sAppScope = null;
     }
 
-    /*
+    /**
      * This method resets the currently active {@link DependencyScope} to {@code null}.
      * This method is added only for testing purposes.
      */

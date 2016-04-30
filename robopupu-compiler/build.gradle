@@ -43,7 +43,7 @@ sourceSets {
     main {
         compileClasspath += configurations.provided
     }
-} */ BINTRAY
+} */ // BINTRAY
 
 // This is important even if Android Studio claims it isn't
 // used. Android can't interpret Java 8 byte code.
