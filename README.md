@@ -20,6 +20,9 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 ## Installation
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
+### 0.4.7
+* Updated the compiler for Robopupu Android library version 0.4.7
+* 
 ### 0.4.6
 * Updated the compiler to support the extended Dependency API of Robopupu version 0.4.6
  
