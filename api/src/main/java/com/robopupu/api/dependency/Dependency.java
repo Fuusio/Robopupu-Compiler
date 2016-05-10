@@ -18,7 +18,6 @@ package com.robopupu.api.dependency;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -99,7 +98,6 @@ public class Dependency {
             try {
                 scopeClass = (Class<? extends DependencyScope>)Class.forName(scopeClassName);
             } catch (ClassNotFoundException e) {
-                // Log.d(TAG, "Class: " + scopeClassName + " was not found.");
             }
             scope = getScope(scopeClass, createInstance);
         }
@@ -164,7 +162,6 @@ public class Dependency {
      *
      * @return A {@link DependencyScope}. May not return {@code null}.
      */
-    //@NonNull
     public static DependencyScope getActiveScope() {
         if (sActiveScope != null) {
             return sActiveScope;
@@ -226,12 +223,11 @@ public class Dependency {
         final Class<? extends DependencyScope> scopeClass = owner.getScopeClass();
 
         if (!scopeClass.isAssignableFrom(scope.getClass())) {
-            final StringBuilder message = new StringBuilder("DependencyScopeOwner of type: ");
-            message.append(owner.getClass().getName());
-            message.append(" cannot own DependencyScope of type: ");
-            message.append(scope.getClass().getName());
-            message.append(". The expected type is: " + scopeClass.getName());
-            throw new IllegalArgumentException(message.toString());
+            final String message = "DependencyScopeOwner of type: " + owner.getClass().getName() +
+                    " cannot own DependencyScope of type: " +
+                    scope.getClass().getName() +
+                    ". The expected type is: " + scopeClass.getName();
+            throw new IllegalArgumentException(message);
         }
 
         final String id = scopeClass.getCanonicalName();
@@ -391,10 +387,11 @@ public class Dependency {
      * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
      * it indicates an error in an {@link DependencyScope} implementation or configuration.
      */
+    @SuppressWarnings({"unchecked", "unused"})
     public static <T> Collection<T> getAll(final Class<T> dependencyType) {
-        final HashSet<T> dependencies = new HashSet<>();
-        getActiveScope().getDependencies(dependencies, dependencyType, null);
-        return dependencies;
+        final DependencyQuery<T> query = DependencyQuery.findAll(dependencyType);
+        getActiveScope().getDependencies(query, null);
+        return query.getFoundDependencies();
     }
 
     /**
@@ -407,6 +404,7 @@ public class Dependency {
      * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
      * it indicates an error in an {@link DependencyScope} implementation or configuration.
      */
+    @SuppressWarnings("unused")
     public static <T> Collection<T> getAll(final Class<? extends DependencyScope> scopeType, final Class<T> dependencyType) {
         return getAll(scopeType, dependencyType, null);
     }
@@ -423,14 +421,15 @@ public class Dependency {
      * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
      * it indicates an error in an {@link DependencyScope} implementation or configuration.
      */
+    @SuppressWarnings({"unchecked", "unused"})
     public static <T> Collection<T> getAll(final Class<? extends DependencyScope> scopeClass, final Class<T> dependencyType, final Object dependant) {
-        DependencyScope scope = getScope(scopeClass, true);
-        final HashSet<T> dependencies = new HashSet<>();
+        final DependencyScope scope = getScope(scopeClass, true);
+        final DependencyQuery<T> query = DependencyQuery.findAll(dependencyType);
 
         if (scope != null) {
-            scope.getDependencies(dependencies, dependencyType, dependant);
+            scope.getDependencies(query, dependant);
         }
-        return dependencies;
+        return query.getFoundDependencies();
     }
 
     /**
@@ -443,10 +442,11 @@ public class Dependency {
      * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
      * it indicates an error in an {@link DependencyScope} implementation or configuration.
      */
+    @SuppressWarnings({"unchecked", "unused"})
     public static <T> Collection<T> getAll(final DependencyScope scope, final Class<T> dependencyType) {
-        final HashSet<T> dependencies = new HashSet<>();
-        scope.getDependencies(dependencies, dependencyType, null);
-        return dependencies;
+        final DependencyQuery<T> query = DependencyQuery.findAll(dependencyType);
+        scope.getDependencies(query, null);
+        return query.getFoundDependencies();
     }
 
     /**
@@ -460,10 +460,11 @@ public class Dependency {
      * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
      * it indicates an error in an {@link DependencyScope} implementation or configuration.
      */
+    @SuppressWarnings({"unchecked", "unused"})
     public static <T> Collection<T> getAll(final Class<T> dependencyType, final Object dependant) {
-        final HashSet<T> dependencies = new HashSet<>();
-        getActiveScope().getDependencies(dependencies, dependencyType, dependant);
-        return dependencies;
+        final DependencyQuery<T> query = DependencyQuery.findAll(dependencyType);
+        getActiveScope().getDependencies(query, dependant);
+        return query.getFoundDependencies();
     }
 
     /**
@@ -478,10 +479,11 @@ public class Dependency {
      * @return A {@link Collection} containing the found dependencies. If an empty {@link Collection} is returned,
      * it indicates an error in an {@link DependencyScope} implementation or configuration.
      */
+    @SuppressWarnings({"unchecked", "unused"})
     public static <T> Collection<T> getAll(final DependencyScope scope, final Class<T> dependencyType, final Object dependant) {
-        final HashSet<T> dependencies = new HashSet<>();
-        scope.getDependencies(dependencies, dependencyType, dependant);
-        return dependencies;
+        final DependencyQuery<T> query = DependencyQuery.findAll(dependencyType);
+        scope.getDependencies(query, dependant);
+        return query.getFoundDependencies();
     }
 
     /**

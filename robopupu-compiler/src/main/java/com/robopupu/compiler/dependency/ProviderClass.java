@@ -37,4 +37,8 @@ public class ProviderClass  {
             return value.toString().replace(".class", "");
         }
     }
+
+    public String getType() {
+        return mTypeElement.toString();
+    }
 }

@@ -106,9 +106,10 @@ public class DependencyProviderClass {
 
         for (final ProviderClass providerClass : mProviderClasses) {
 
-            final String returnType = providerClass.getProvidedType();
+            final String providedType = providerClass.getProvidedType();
+            final String implementationType = providerClass.getType();
 
-            methodBuilder.beginControlFlow(String.format("if (query.matches(%s.class))", returnType));
+            methodBuilder.beginControlFlow(String.format("if (query.matches(%1$s.class, %2$s.class))", providedType, implementationType));
 
             final JavaWriter writer = new JavaWriter();
 
@@ -126,9 +127,10 @@ public class DependencyProviderClass {
 
         for (final ProviderMethod providerMethod : mProviderMethods) {
 
-            final String returnType = providerMethod.getProvidedType();
+            final String providedType = providerMethod.getProvidedType();
+            final String implementationType = providerMethod.getReturnType(); // XXX
 
-            methodBuilder.beginControlFlow(String.format("if (query.matches(%s.class))", returnType));
+            methodBuilder.beginControlFlow(String.format("if (query.matches(%1$s.class, %2$s.class))", providedType, implementationType));
 
             final JavaWriter writer = new JavaWriter();
 
@@ -172,9 +174,10 @@ public class DependencyProviderClass {
 
         for (final ProviderConstructor providerConstructor : mProviderConstructors) {
 
-            final String returnType = providerConstructor.getProvidedType();
+            final String providedType = providerConstructor.getProvidedType();
+            final String implementationType = providerConstructor.getType();
 
-            methodBuilder.beginControlFlow(String.format("if (query.matches(%s.class))", returnType));
+            methodBuilder.beginControlFlow(String.format("if (query.matches(%1$s.class, %2$s.class))", providedType, implementationType));
 
             final JavaWriter writer = new JavaWriter();
 

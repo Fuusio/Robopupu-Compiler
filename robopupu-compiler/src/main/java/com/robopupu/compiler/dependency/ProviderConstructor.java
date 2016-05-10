@@ -30,4 +30,8 @@ public class ProviderConstructor extends ProviderExecutable {
             return value.toString().replace(".class", "");
         }
     }
+
+    public String getType() {
+        return mExecutableElement.getEnclosingElement().asType().toString();
+    }
 }

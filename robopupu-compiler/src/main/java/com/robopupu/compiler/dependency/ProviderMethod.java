@@ -34,4 +34,8 @@ public class ProviderMethod extends ProviderExecutable  {
             return value.toString().replace(".class", "");
         }
     }
+
+    public String getReturnType() {
+        return mExecutableElement.getReturnType().toString();
+    }
 }
