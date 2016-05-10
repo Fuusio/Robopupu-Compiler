@@ -22,7 +22,7 @@ Please follow the installation instructions available in [Robopupu Github reposi
 
 ### 0.4.8
 * Updated the code generation for Dependency API to be compatible with the changes in Robopupu Android library version 0.4.8
-* 
+ 
 ### 0.4.7
 * Updated the compiler for Robopupu Android library version 0.4.7
  
