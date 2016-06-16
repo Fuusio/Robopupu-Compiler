@@ -1,1 +1,1 @@
-include ':app', ':api', ':robopupu-compiler'
+include ':api', ':robopupu-compiler'
