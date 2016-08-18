@@ -11,19 +11,19 @@ import javax.lang.model.element.VariableElement;
  */
 public class SetterMethod {
 
-    protected final ExecutableElement mExecutableElement;
-    protected final String mSignature;
+    protected final ExecutableElement executableElement;
+    protected final String signature;
 
     public SetterMethod(final ExecutableElement executableElement) {
-        mExecutableElement = executableElement;
-        mSignature = createSignature();
+        this.executableElement = executableElement;
+        signature = createSignature();
     }
 
     private String createSignature() {
         final StringBuilder builder = new StringBuilder(getMethodName());
         builder.append("(");
 
-        final List<? extends VariableElement> parameters = mExecutableElement.getParameters();
+        final List<? extends VariableElement> parameters = executableElement.getParameters();
 
         if (!parameters.isEmpty()) {
             boolean firstParameter = true;
@@ -43,19 +43,19 @@ public class SetterMethod {
     }
 
     public ExecutableElement getExecutableElement() {
-        return mExecutableElement;
+        return executableElement;
     }
 
     public String getMethodName() {
-        return mExecutableElement.getSimpleName().toString();
+        return executableElement.getSimpleName().toString();
     }
 
     public List<? extends VariableElement> getParameters() {
-        return mExecutableElement.getParameters();
+        return executableElement.getParameters();
     }
 
     public String getSignature() {
-        return mSignature;
+        return signature;
     }
 
     private String getParameterType(final VariableElement variable) {

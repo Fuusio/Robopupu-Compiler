@@ -41,18 +41,18 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class FsmAnnotationProcessor extends AbstractProcessor {
 
-    private Elements mElementUtils;
-    private Filer mFiler;
-    private Messager mMessager;
+    private Elements elementUtils;
+    private Filer filer;
+    private Messager messager;
     private HashMap<String, StateEngineClass> mStateEngineClasses;
 
     @Override
     public synchronized void init(final ProcessingEnvironment environment) {
         super.init(environment);
 
-        mFiler = environment.getFiler();
-        mElementUtils = environment.getElementUtils();
-        mMessager = environment.getMessager();
+        filer = environment.getFiler();
+        elementUtils = environment.getElementUtils();
+        messager = environment.getMessager();
         mStateEngineClasses = new HashMap<>();
     }
 
@@ -205,7 +205,7 @@ public class FsmAnnotationProcessor extends AbstractProcessor {
         // annotations
         try {
             for (final StateEngineClass stateEngineClass : mStateEngineClasses.values()) {
-                stateEngineClass.generateCode(mElementUtils, mFiler);
+                stateEngineClass.generateCode(elementUtils, filer);
             }
             mStateEngineClasses.clear();
         } catch (IOException e) {
@@ -248,6 +248,6 @@ public class FsmAnnotationProcessor extends AbstractProcessor {
      * @param errorMessage A {@link String} containing the error message.
      */
     public void handleError(final Element element, final String errorMessage) {
-        mMessager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
+        messager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
     }
 }

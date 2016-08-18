@@ -26,18 +26,18 @@ public enum Keyword {
     THROW("throw"),
     THIS("this");
 
-    private final String mKeyword;
+    private final String keyword;
 
     Keyword(final String keyword) {
-        mKeyword = keyword;
+        this.keyword = keyword;
     }
 
     public final String toString() {
-        return mKeyword;
+        return keyword;
     }
 
     public JavaWriter write(final JavaWriter writer) {
-        writer.append(mKeyword);
+        writer.append(keyword);
         writer.append(" ");
         return writer;
     }

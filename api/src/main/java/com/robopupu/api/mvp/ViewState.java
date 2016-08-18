@@ -23,27 +23,27 @@ import com.robopupu.api.util.LifecycleState;
  */
 public class ViewState {
 
-    private final View mView;
+    private final View view;
 
-    private boolean mInstanceStateSaved;
-    private LifecycleState mLifecycleState;
-    private boolean mMovedToBackground;
-    private boolean mRestarted;
+    private boolean instanceStateSaved;
+    private LifecycleState lifecycleState;
+    private boolean isMovedToBackground;
+    private boolean isRestarted;
 
     public ViewState() {
         this(null);
     }
 
     public ViewState(final View view) {
-        mView = view;
-        mInstanceStateSaved = false;
-        mLifecycleState = LifecycleState.DORMANT;
-        mMovedToBackground = false;
-        mRestarted = false;
+        this.view = view;
+        instanceStateSaved = false;
+        lifecycleState = LifecycleState.DORMANT;
+        isMovedToBackground = false;
+        isRestarted = false;
     }
 
     public void setInstanceStateSaved(final boolean saved) {
-        mInstanceStateSaved = saved;
+        instanceStateSaved = saved;
     }
 
     /*
@@ -51,7 +51,7 @@ public class ViewState {
      * @return A {@link LifecycleState}.
      */
     public LifecycleState getLifecycleState() {
-        return mLifecycleState;
+        return lifecycleState;
     }
 
     /*
@@ -61,7 +61,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isDormant() {
-        return mLifecycleState.isDormant();
+        return lifecycleState.isDormant();
     }
 
     /*
@@ -70,7 +70,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isCreated() {
-        return mLifecycleState.isCreated();
+        return lifecycleState.isCreated();
     }
 
     /*
@@ -81,7 +81,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isStarted() {
-        return mLifecycleState.isStarted() || mLifecycleState.isResumed();
+        return lifecycleState.isStarted() || lifecycleState.isResumed();
     }
 
     /*
@@ -91,7 +91,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isResumed() {
-        return mLifecycleState.isResumed();
+        return lifecycleState.isResumed();
     }
 
     /*
@@ -100,7 +100,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isPaused() {
-        return mLifecycleState.isPaused();
+        return lifecycleState.isPaused();
     }
 
     /*
@@ -109,7 +109,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isRestarted() {
-        return isStarted() && mRestarted;
+        return isStarted() && isRestarted;
     }
 
     /*
@@ -118,7 +118,7 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isStopped() {
-        return mLifecycleState.isStopped() || mLifecycleState.isDestroyed();
+        return lifecycleState.isStopped() || lifecycleState.isDestroyed();
     }
 
     /*
@@ -127,66 +127,66 @@ public class ViewState {
      * @return A {@code boolean} value.
      */
     public boolean isDestroyed() {
-        return mLifecycleState.isDestroyed();
+        return lifecycleState.isDestroyed();
     }
 
     /*
      * Invoked when the {@link View} is created.
      */
     public void onCreate() {
-        mLifecycleState = LifecycleState.CREATED;
+        lifecycleState = LifecycleState.CREATED;
     }
 
     /*
      * Invoked when the {@link View} is started.
      */
     public void onStart() {
-        mLifecycleState = LifecycleState.STARTED;
+        lifecycleState = LifecycleState.STARTED;
     }
 
     /*
      * Invoked when the {@link View} is restarted.
      */
     public void onRestart() {
-        mRestarted = true;
+        isRestarted = true;
     }
 
     /*
      * Invoked when the {@link View} is paused.
      */
     public void onPause() {
-        mLifecycleState = LifecycleState.PAUSED;
-        mMovedToBackground = true;
+        lifecycleState = LifecycleState.PAUSED;
+        isMovedToBackground = true;
     }
 
     /*
      * Invoked when the {@link View} is resumed.
      */
     public void onResume() {
-        mLifecycleState = LifecycleState.RESUMED;
-        mInstanceStateSaved = false;
-        mMovedToBackground = false;
+        lifecycleState = LifecycleState.RESUMED;
+        instanceStateSaved = false;
+        isMovedToBackground = false;
     }
 
     /*
      * Invoked when the {@link View} is stopped.
      */
     public void onStop() {
-        mLifecycleState = LifecycleState.STOPPED;
+        lifecycleState = LifecycleState.STOPPED;
     }
 
     /*
      * Invoked when the {@link View} is destroyed.
      */
     public void onDestroy() {
-        mLifecycleState = LifecycleState.DESTROYED;
+        lifecycleState = LifecycleState.DESTROYED;
     }
 
     public boolean canCommitFragment() {
-        return !mInstanceStateSaved;
+        return !instanceStateSaved;
     }
 
     public boolean isMovedToBackground() {
-        return mMovedToBackground;
+        return isMovedToBackground;
     }
 }

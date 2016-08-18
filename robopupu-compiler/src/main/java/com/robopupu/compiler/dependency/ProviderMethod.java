@@ -17,25 +17,25 @@ public class ProviderMethod extends ProviderExecutable  {
     }
 
     public String getMethodName() {
-        return mExecutableElement.getSimpleName().toString();
+        return executableElement.getSimpleName().toString();
     }
 
     public String getDependencyScopeType() {
-        return mExecutableElement.getEnclosingElement().asType().toString();
+        return executableElement.getEnclosingElement().asType().toString();
     }
 
     @Override
     public String getProvidedType() {
-        if (mProvidesAnnotation == null) {
-            return mExecutableElement.getReturnType().toString();
+        if (providesAnnotation == null) {
+            return executableElement.getReturnType().toString();
         } else {
-            Collection<? extends AnnotationValue> values = mProvidesAnnotation.getElementValues().values();
+            Collection<? extends AnnotationValue> values = providesAnnotation.getElementValues().values();
             final AnnotationValue value = values.iterator().next();
             return value.toString().replace(".class", "");
         }
     }
 
     public String getReturnType() {
-        return mExecutableElement.getReturnType().toString();
+        return executableElement.getReturnType().toString();
     }
 }

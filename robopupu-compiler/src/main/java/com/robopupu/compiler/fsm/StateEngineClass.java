@@ -37,51 +37,51 @@ public class StateEngineClass {
 
     private static final ClassName CLASS_STATE_ENGINE = ClassName.get(StateEngine.class);
 
-    private final String mClassName;
-    private final HashMap<String, TypeElement> mContextInterfaces;
-    private final HashMap<String, TypeElement> mEventInterfaces;
-    private final HashMap<String, EventMethod> mEventMethods;
-    private final HashMap<String, SetterMethod> mSetterMethods;
+    private final String className;
+    private final HashMap<String, TypeElement> contextInterfaces;
+    private final HashMap<String, TypeElement> eventInterfaces;
+    private final HashMap<String, EventMethod> eventMethods;
+    private final HashMap<String, SetterMethod> setterMethods;
 
     public StateEngineClass(final String className) throws ProcessorException {
-        mClassName = className;
-        mContextInterfaces = new HashMap<>();
-        mEventInterfaces = new HashMap<>();
-        mEventMethods = new HashMap<>();
-        mSetterMethods = new HashMap<>();
+        this.className = className;
+        contextInterfaces = new HashMap<>();
+        eventInterfaces = new HashMap<>();
+        eventMethods = new HashMap<>();
+        setterMethods = new HashMap<>();
     }
 
     public void addEventMethod(final EventMethod eventMethod) {
         final String signature = eventMethod.getSignature();
-        mEventMethods.put(signature, eventMethod);
+        eventMethods.put(signature, eventMethod);
     }
 
     public void addSetterMethod(final SetterMethod setterMethod) {
         final String signature = setterMethod.getSignature();
-        mSetterMethods.put(signature, setterMethod);
+        setterMethods.put(signature, setterMethod);
     }
 
     public void addEventInterface(final TypeElement eventInterface) {
-        mEventInterfaces.put(eventInterface.getQualifiedName().toString(), eventInterface);
+        eventInterfaces.put(eventInterface.getQualifiedName().toString(), eventInterface);
     }
 
     public void addContextInterface(final TypeElement contextInterface) {
-        mContextInterfaces.put(contextInterface.getQualifiedName().toString(), contextInterface);
+        contextInterfaces.put(contextInterface.getQualifiedName().toString(), contextInterface);
     }
 
     public void generateCode(final Elements elementUtils, final Filer filer) throws IOException {
-        final String packageName  = StringToolkit.getPackageName(mClassName);
+        final String packageName  = StringToolkit.getPackageName(className);
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(STATE_ENGINE_CLASS_NAME);
         final ParameterizedTypeName superType = ParameterizedTypeName.get(CLASS_STATE_ENGINE, TypeVariableName.get(STATE_ENGINE_CLASS_NAME));
 
         classBuilder.superclass(superType);
         classBuilder.addModifiers(Modifier.PUBLIC);
 
-        for (final TypeElement eventInterface : mEventInterfaces.values()) {
+        for (final TypeElement eventInterface : eventInterfaces.values()) {
             classBuilder.addSuperinterface(TypeName.get(eventInterface.asType()));
         }
 
-        for (final TypeElement contextInterface : mContextInterfaces.values()) {
+        for (final TypeElement contextInterface : contextInterfaces.values()) {
             classBuilder.addSuperinterface(TypeName.get(contextInterface.asType()));
         }
 
@@ -89,11 +89,11 @@ public class StateEngineClass {
         buildStateConstructor(classBuilder);
         buildCreateMethod(classBuilder);
 
-        for (final EventMethod eventMethod : mEventMethods.values()) {
+        for (final EventMethod eventMethod : eventMethods.values()) {
             buildEventDispatcherMethod(classBuilder, eventMethod);
         }
 
-        for (final SetterMethod setterMethod : mSetterMethods.values()) {
+        for (final SetterMethod setterMethod : setterMethods.values()) {
             buildContextGetterMethod(classBuilder, setterMethod);
             buildContextSetterMethod(classBuilder, setterMethod);
         }
@@ -156,9 +156,9 @@ public class StateEngineClass {
         }
 
         methodBuilder.beginControlFlow("if (isStateEngine())");
-        methodBuilder.addStatement(String.format("mCurrentState.%s", invocation));
-        methodBuilder.nextControlFlow("else if (mSuperState != getStateEngine())");
-        methodBuilder.addStatement(String.format("mSuperState.%s", invocation));
+        methodBuilder.addStatement(String.format("currentState.%s", invocation));
+        methodBuilder.nextControlFlow("else if (superState != getStateEngine())");
+        methodBuilder.addStatement(String.format("superState.%s", invocation));
         methodBuilder.nextControlFlow("else");
         methodBuilder.addStatement(String.format("onError(this, StateEngine.Error.ERROR_UNHANDLED_EVENT, \"%s\")", methodName));
         methodBuilder.endControlFlow();
@@ -180,12 +180,12 @@ public class StateEngineClass {
         final VariableElement parameter = parameters.get(0);
         final TypeName typeName = TypeName.get(parameter.asType());
         final String parameterName = parameter.getSimpleName().toString();
-        final String fieldName = "m" + StringToolkit.upperCaseFirstCharacter(parameterName);
+        final String fieldName = parameterName;
         final ParameterSpec.Builder parameterBuilder = ParameterSpec.builder(typeName, parameterName, Modifier.FINAL);
 
         methodBuilder.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
         methodBuilder.addParameter(parameterBuilder.build());
-        methodBuilder.addStatement(String.format("%s = %s", fieldName, parameterName));
+        methodBuilder.addStatement(String.format("this.%s = %s", fieldName, parameterName));
 
         // Create an instance field for the context reference
 
@@ -207,7 +207,7 @@ public class StateEngineClass {
         final TypeName typeName = TypeName.get(parameter.asType());
         final String parameterName = parameter.getSimpleName().toString();
         final String formattedName = StringToolkit.upperCaseFirstCharacter(parameterName);
-        final String fieldName = "m" + formattedName;
+        final String fieldName = parameterName;
         final String methodName = "get" + formattedName;
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName);
         methodBuilder.addModifiers(Modifier.PROTECTED, Modifier.FINAL);

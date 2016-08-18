@@ -12,33 +12,33 @@ import javax.lang.model.element.TypeElement;
  */
 public class ProviderClass  {
 
-    protected final TypeElement mTypeElement;
-    protected final AnnotationMirror mProvidesAnnotation;
+    protected final TypeElement typeElement;
+    protected final AnnotationMirror providesAnnotation;
 
     public ProviderClass(final TypeElement typeElement, final AnnotationMirror providesAnnotation) {
-        mTypeElement = typeElement;
-        mProvidesAnnotation = providesAnnotation;
+        this.typeElement = typeElement;
+        this.providesAnnotation = providesAnnotation;
     }
 
     public TypeElement getTypeElement() {
-        return mTypeElement;
+        return typeElement;
     }
 
     public String getDependencyScopeType() {
-        return mTypeElement.asType().toString();
+        return typeElement.asType().toString();
     }
 
     public String getProvidedType() {
-        if (mProvidesAnnotation == null) {
-            return mTypeElement.toString();
+        if (providesAnnotation == null) {
+            return typeElement.toString();
         } else {
-            Collection<? extends AnnotationValue> values = mProvidesAnnotation.getElementValues().values();
+            Collection<? extends AnnotationValue> values = providesAnnotation.getElementValues().values();
             final AnnotationValue value = values.iterator().next();
             return value.toString().replace(".class", "");
         }
     }
 
     public String getType() {
-        return mTypeElement.toString();
+        return typeElement.toString();
     }
 }

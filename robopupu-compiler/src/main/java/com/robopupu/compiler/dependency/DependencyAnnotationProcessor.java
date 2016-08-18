@@ -71,25 +71,25 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
     };
 
 
-    private HashMap<String, DependencyProviderClass> mDependencyProviderClasses;
-    private Elements mElementUtils;
-    private Filer mFiler;
-    private Messager mMessager;
-    private HashMap<String, Element> mProvidedTypes;
-    private ArrayList<ProviderMethod> mProvidesMethods;
-    private ArrayList<ProviderConstructor> mProviderConstructors;
+    private HashMap<String, DependencyProviderClass> dependencyProviderClasses;
+    private Elements elementUtils;
+    private Filer filer;
+    private Messager messager;
+    private HashMap<String, Element> providedTypes;
+    private ArrayList<ProviderMethod> providesMethods;
+    private ArrayList<ProviderConstructor> providerConstructors;
 
     @Override
     public synchronized void init(final ProcessingEnvironment environment) {
         super.init(environment);
 
-        mFiler = environment.getFiler();
-        mElementUtils = environment.getElementUtils();
-        mMessager = environment.getMessager();
-        mProviderConstructors = new ArrayList<>();
-        mProvidesMethods = new ArrayList<>();
-        mProvidedTypes = new HashMap<>();
-        mDependencyProviderClasses = new HashMap<>();
+        filer = environment.getFiler();
+        elementUtils = environment.getElementUtils();
+        messager = environment.getMessager();
+        providerConstructors = new ArrayList<>();
+        providesMethods = new ArrayList<>();
+        providedTypes = new HashMap<>();
+        dependencyProviderClasses = new HashMap<>();
     }
 
     @Override
@@ -146,7 +146,7 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
 
                     if (valuesCount == 0) {
                         final DependencyProviderClass dependencyProviderClass = new DependencyProviderClass(classElement);
-                        mDependencyProviderClasses.put(className, dependencyProviderClass);
+                        dependencyProviderClasses.put(className, dependencyProviderClass);
                     }
                 }
             }
@@ -203,12 +203,12 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
                 if (isMethodElement) {
                     final ExecutableElement executableElement = (ExecutableElement)annotatedElement;
                     providerMethod = new ProviderMethod(executableElement, valuesCount == 1 ? providesAnnotationMirror : null);
-                    mProvidesMethods.add(providerMethod);
+                    providesMethods.add(providerMethod);
                     providedType = providerMethod.getProvidedType();
                 } else if (isConstructorElement) {
                     final ExecutableElement executableElement = (ExecutableElement)annotatedElement;
                     providerConstructor = new ProviderConstructor(executableElement, valuesCount == 1 ? providesAnnotationMirror : null);
-                    mProviderConstructors.add(providerConstructor);
+                    providerConstructors.add(providerConstructor);
                     providedType = providerConstructor.getProvidedType();
                 } else {
                     final TypeElement typeElement = (TypeElement)annotatedElement;
@@ -225,7 +225,7 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
                     }
                 }
 
-                mProvidedTypes.put(providedType, annotatedElement);
+                providedTypes.put(providedType, annotatedElement);
 
                 if (isConstructorElement) {
                     if (scopeAnnotationMirror != null) {
@@ -242,7 +242,7 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
                             scopeType = value.toString().replace(".class", "");
                         }
 
-                        final DependencyProviderClass dependencyProviderClass = mDependencyProviderClasses.get(scopeType);
+                        final DependencyProviderClass dependencyProviderClass = dependencyProviderClasses.get(scopeType);
 
                         if (dependencyProviderClass != null) {
                             dependencyProviderClass.addProviderConstructor(providerConstructor);
@@ -262,7 +262,7 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
                 } else  if (isMethodElement) {
                     final ExecutableElement executableElement = (ExecutableElement)annotatedElement;
                     final String scopeType = executableElement.getEnclosingElement().asType().toString();
-                    final DependencyProviderClass dependencyProviderClass = mDependencyProviderClasses.get(scopeType);
+                    final DependencyProviderClass dependencyProviderClass = dependencyProviderClasses.get(scopeType);
                     dependencyProviderClass.addProviderMethod(providerMethod);
                 } else {
                     if (scopeAnnotationMirror != null) {
@@ -279,7 +279,7 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
                             scopeType = value.toString().replace(".class", "");
                         }
 
-                        final DependencyProviderClass dependencyProviderClass = mDependencyProviderClasses.get(scopeType);
+                        final DependencyProviderClass dependencyProviderClass = dependencyProviderClasses.get(scopeType);
 
                         if (dependencyProviderClass != null) {
                             dependencyProviderClass.addProviderClass(providerClass);
@@ -306,19 +306,19 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
         // Generate DependencyProvider implementations for all classes annotated with Scope
         try {
 
-            for (final ProviderMethod method : mProvidesMethods) {
+            for (final ProviderMethod method : providesMethods) {
                 validateProvidesMethodElement(method);
             }
 
-            for (final ProviderConstructor constructor : mProviderConstructors) {
+            for (final ProviderConstructor constructor : providerConstructors) {
                 validateProvidesConstructorElement(constructor);
             }
 
-            for (final DependencyProviderClass dependencyProviderClass : mDependencyProviderClasses.values()) {
+            for (final DependencyProviderClass dependencyProviderClass : dependencyProviderClasses.values()) {
                 validateScopeClass(dependencyProviderClass);
-                dependencyProviderClass.generateCode(mElementUtils, mFiler);
+                dependencyProviderClass.generateCode(elementUtils, filer);
             }
-            mDependencyProviderClasses.clear();
+            dependencyProviderClasses.clear();
 
         } catch (com.robopupu.compiler.util.ProcessorException e) {
             handleError(e.getElement(), e.getMessage());
@@ -331,8 +331,8 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
 
     private DependencyProviderClass getImplicitScopeClass(final String enclosingClass) {
 
-        for (final DependencyProviderClass dependencyProviderClass : mDependencyProviderClasses.values()) {
-            final String packageName = dependencyProviderClass.getPackageName(mElementUtils);
+        for (final DependencyProviderClass dependencyProviderClass : dependencyProviderClasses.values()) {
+            final String packageName = dependencyProviderClass.getPackageName(elementUtils);
 
             if (enclosingClass.startsWith(packageName)) {
                 return dependencyProviderClass;
@@ -428,11 +428,11 @@ public class DependencyAnnotationProcessor extends AbstractProcessor {
      * @param errorMessage A {@link String} containing the error message.
      */
     public void handleError(final Element element, final String errorMessage) {
-        mMessager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
+        messager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
     }
 
     private boolean isProvidedType(final String type) {
-        if (mProvidedTypes.containsKey(type)) {
+        if (providedTypes.containsKey(type)) {
             return true;
         }
         for (int i = PROVIDED_TYPES.length - 1; i >= 0; i--) {

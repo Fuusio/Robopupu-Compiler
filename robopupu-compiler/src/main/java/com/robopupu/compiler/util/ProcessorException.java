@@ -8,14 +8,14 @@ import javax.lang.model.element.Element;
  */
 public class ProcessorException extends Exception {
 
-    private final Element mElement;
+    private final Element element;
 
     public ProcessorException(final Element element, final String message, final Object... args) {
         super(String.format(message, args));
-        mElement = element;
+        this.element = element;
     }
 
     public Element getElement() {
-        return mElement;
+        return element;
     }
 }

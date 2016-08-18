@@ -8,19 +8,19 @@ import javax.lang.model.type.TypeMirror;
  */
 public class PlugAnnotatedField {
 
-    private final TypeMirror mFieldType;
-    private final String mScopeClass;
+    private final TypeMirror fieldType;
+    private final String scopeClass;
 
     public PlugAnnotatedField(final TypeMirror fieldType, final String scopeClass) {
-        mFieldType = fieldType;
-        mScopeClass = scopeClass;
+        this.fieldType = fieldType;
+        this.scopeClass = scopeClass;
     }
 
     public TypeMirror getFieldType() {
-        return mFieldType;
+        return fieldType;
     }
 
     public String getScopeClass() {
-        return mScopeClass;
+        return scopeClass;
     }
 }

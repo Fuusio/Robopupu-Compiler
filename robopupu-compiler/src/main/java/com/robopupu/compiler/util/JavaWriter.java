@@ -21,35 +21,35 @@ public class JavaWriter {
 
     private static final String INDENTATION = "    ";
 
-    private final StringBuilder mBuilder;
+    private final StringBuilder builder;
 
-    private String mIndentation;
-    private int mIndentationCount;
+    private String indentation;
+    private int indentationCount;
 
     public JavaWriter() {
         this(new StringBuilder());
     }
 
     public JavaWriter(final StringBuilder builder) {
-        mIndentation = INDENTATION;
-        mBuilder = builder;
-        mIndentationCount = 0;
+        indentation = INDENTATION;
+        this.builder = builder;
+        indentationCount = 0;
     }
 
     public final String getIndentation() {
-        return mIndentation;
+        return indentation;
     }
 
     public void setIndentation(final String indentation) {
-        mIndentation = indentation;
+        this.indentation = indentation;
     }
 
     public final int getIndentationCount() {
-        return mIndentationCount;
+        return indentationCount;
     }
 
     public void setIndentationCount(final int count) {
-        mIndentationCount = count;
+        indentationCount = count;
     }
 
     public JavaWriter a(final String string) {
@@ -57,12 +57,12 @@ public class JavaWriter {
     }
 
     public JavaWriter append(final String string) {
-        mBuilder.append(string);
+        builder.append(string);
         return this;
     }
 
     public JavaWriter append(final boolean value) {
-        mBuilder.append(Boolean.toString(value));
+        builder.append(Boolean.toString(value));
         return this;
     }
 
@@ -71,19 +71,19 @@ public class JavaWriter {
     }
 
     public JavaWriter append(final float value) {
-        mBuilder.append(Float.toString(value));
-        mBuilder.append('f');
+        builder.append(Float.toString(value));
+        builder.append('f');
         return this;
     }
 
     public JavaWriter append(final long value) {
-        mBuilder.append(Long.toString(value));
-        mBuilder.append('L');
+        builder.append(Long.toString(value));
+        builder.append('L');
         return this;
     }
 
     public JavaWriter append(final int value) {
-        mBuilder.append(Integer.toString(value));
+        builder.append(Integer.toString(value));
         return this;
     }
 
@@ -92,7 +92,7 @@ public class JavaWriter {
     }
 
     public JavaWriter space() {
-        mBuilder.append(' ');
+        builder.append(' ');
         return this;
     }
 
@@ -102,8 +102,8 @@ public class JavaWriter {
 
 
     public JavaWriter intend() {
-        for (int i = 0; i < mIndentationCount; i++) {
-            mBuilder.append(mIndentation);
+        for (int i = 0; i < indentationCount; i++) {
+            builder.append(indentation);
         }
         return this;
     }
@@ -121,7 +121,7 @@ public class JavaWriter {
     }
 
     public JavaWriter newLine(final boolean indented) {
-        mBuilder.append('\n');
+        builder.append('\n');
 
         if (indented) {
             intend();
@@ -130,9 +130,9 @@ public class JavaWriter {
     }
 
     public JavaWriter beginBlock() {
-        mBuilder.append('{');
-        mBuilder.append('\n');
-        mIndentationCount++;
+        builder.append('{');
+        builder.append('\n');
+        indentationCount++;
         intend();
         return this;
     }
@@ -150,25 +150,25 @@ public class JavaWriter {
     }
 
     public JavaWriter endBlock(final boolean newLine) {
-        mIndentationCount--;
+        indentationCount--;
         intend();
-        mBuilder.append('}');
+        builder.append('}');
 
         if (newLine) {
-            mBuilder.append('\n');
+            builder.append('\n');
         } else {
-            mBuilder.append(" ");
+            builder.append(" ");
         }
         return this;
     }
 
     public JavaWriter openParenthesis() {
-        mBuilder.append('(');
+        builder.append('(');
         return this;
     }
 
     public JavaWriter closeParenthesis() {
-        mBuilder.append(')');
+        builder.append(')');
         return this;
     }
 
@@ -185,7 +185,7 @@ public class JavaWriter {
     }
 
     public JavaWriter endStatement(final boolean intented) {
-        mBuilder.append(";\n");
+        builder.append(";\n");
         if (intented) {
             intend();
         }
@@ -247,20 +247,20 @@ public class JavaWriter {
     }
 
     public String getCode() {
-        return mBuilder.toString();
+        return builder.toString();
     }
 
     public boolean isEmpty() {
-        return mBuilder.length() == 0;
+        return builder.length() == 0;
     }
 
     public JavaWriter clear() {
-        mBuilder.setLength(0);
+        builder.setLength(0);
         return this;
     }
 
     public JavaWriter c() {
-        mBuilder.setLength(0);
+        builder.setLength(0);
         return this;
     }
 }

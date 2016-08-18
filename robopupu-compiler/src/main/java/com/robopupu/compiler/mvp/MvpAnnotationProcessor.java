@@ -37,20 +37,20 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class MvpAnnotationProcessor extends AbstractProcessor {
 
-    private HashMap<String, EventsDelegateClass> mEventsDelegateClasses;
+    private HashMap<String, EventsDelegateClass> eventsDelegateClasses;
 
-    private Filer mFiler;
-    private Elements mElementUtils;
-    private Messager mMessager;
+    private Filer filer;
+    private Elements elementUtils;
+    private Messager messager;
 
     @Override
     public synchronized void init(final ProcessingEnvironment environment) {
         super.init(environment);
 
-        mFiler = environment.getFiler();
-        mElementUtils = environment.getElementUtils();
-        mMessager = environment.getMessager();
-        mEventsDelegateClasses = new HashMap<>();
+        filer = environment.getFiler();
+        elementUtils = environment.getElementUtils();
+        messager = environment.getMessager();
+        eventsDelegateClasses = new HashMap<>();
     }
 
     @Override
@@ -97,12 +97,12 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
 
             // Generate code
 
-            for (final EventsDelegateClass eventsDelegateClass : mEventsDelegateClasses.values()) {
-                eventsDelegateClass.generateCode(mElementUtils, mFiler);
+            for (final EventsDelegateClass eventsDelegateClass : eventsDelegateClasses.values()) {
+                eventsDelegateClass.generateCode(elementUtils, filer);
             }
 
             // We need to clear cache of EventDelegateClasses after code generation
-            mEventsDelegateClasses.clear();
+            eventsDelegateClasses.clear();
         } catch (ProcessorException e) {
             handleError(e.getElement(), e.getMessage());
         } catch (IOException e) {
@@ -120,11 +120,11 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
             }
 
             final String interfaceClassName = enclosingTypeElement.getQualifiedName().toString();
-            EventsDelegateClass eventsDelegateClass = mEventsDelegateClasses.get(interfaceClassName);
+            EventsDelegateClass eventsDelegateClass = eventsDelegateClasses.get(interfaceClassName);
 
             if (eventsDelegateClass == null) {
                 eventsDelegateClass = new EventsDelegateClass(enclosingTypeElement);
-                mEventsDelegateClasses.put(interfaceClassName, eventsDelegateClass);
+                eventsDelegateClasses.put(interfaceClassName, eventsDelegateClass);
             }
 
             final String methodName = methodElement.getSimpleName().toString();
@@ -162,11 +162,11 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
             }
 
             final String interfaceClassName = enclosingTypeElement.getQualifiedName().toString();
-            EventsDelegateClass eventsDelegateClass = mEventsDelegateClasses.get(interfaceClassName);
+            EventsDelegateClass eventsDelegateClass = eventsDelegateClasses.get(interfaceClassName);
 
             if (eventsDelegateClass == null) {
                 eventsDelegateClass = new EventsDelegateClass(enclosingTypeElement);
-                mEventsDelegateClasses.put(interfaceClassName, eventsDelegateClass);
+                eventsDelegateClasses.put(interfaceClassName, eventsDelegateClass);
             }
 
             final String methodName = methodElement.getSimpleName().toString();
@@ -201,11 +201,11 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
             }
 
             final String interfaceClassName = enclosingTypeElement.getQualifiedName().toString();
-            EventsDelegateClass eventsDelegateClass = mEventsDelegateClasses.get(interfaceClassName);
+            EventsDelegateClass eventsDelegateClass = eventsDelegateClasses.get(interfaceClassName);
 
             if (eventsDelegateClass == null) {
                 eventsDelegateClass = new EventsDelegateClass(enclosingTypeElement);
-                mEventsDelegateClasses.put(interfaceClassName, eventsDelegateClass);
+                eventsDelegateClasses.put(interfaceClassName, eventsDelegateClass);
             }
 
             final String methodName = methodElement.getSimpleName().toString();
@@ -241,7 +241,7 @@ public class MvpAnnotationProcessor extends AbstractProcessor {
      * @param errorMessage A {@link String} containing the error message.
      */
     public void handleError(final Element element, final String errorMessage) {
-        mMessager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
+        messager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
     }
 
     @SuppressWarnings("unchecked")

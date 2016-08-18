@@ -41,27 +41,27 @@ public class EventsDelegateClass {
     private final static String SUFFIX_EVENTS_DELEGATE = "_EventsDelegate";
     private final static ClassName CLASS_PRESENTER_DELEGATE = ClassName.get(PresenterDelegate.class);
 
-    private final HashMap<EventHandlerMethod.EventType, List<EventHandlerMethod>> mEventHandlerMethods;
-    private TypeElement mPresenterInterface;
+    private final HashMap<EventHandlerMethod.EventType, List<EventHandlerMethod>> eventHandlerMethods;
+    private TypeElement presenterInterface;
 
     public EventsDelegateClass(final TypeElement presenterInterface) throws ProcessorException {
-        mPresenterInterface = presenterInterface;
-        mEventHandlerMethods = new HashMap<>();
+        this.presenterInterface = presenterInterface;
+        eventHandlerMethods = new HashMap<>();
     }
 
     public void addEventHandlerMethod(final EventHandlerMethod method) {
         final EventHandlerMethod.EventType eventType = method.getEventType();
-        List<EventHandlerMethod> typedMethods = mEventHandlerMethods.get(eventType);
+        List<EventHandlerMethod> typedMethods = eventHandlerMethods.get(eventType);
 
         if (typedMethods == null) {
             typedMethods = new ArrayList<>();
-            mEventHandlerMethods.put(eventType, typedMethods);
+            eventHandlerMethods.put(eventType, typedMethods);
         }
         typedMethods.add(method);
     }
 
     public void generateCode(final Elements elementUtils, final Filer filer) throws IOException {
-        final String presenterQualifiedName = mPresenterInterface.getQualifiedName().toString();
+        final String presenterQualifiedName = presenterInterface.getQualifiedName().toString();
         final String packageName = StringToolkit.getPackageName(presenterQualifiedName);
         final String className = StringToolkit.getClassName(presenterQualifiedName) + SUFFIX_EVENTS_DELEGATE;
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(className);
@@ -83,7 +83,7 @@ public class EventsDelegateClass {
         final MethodSpec.Builder methodBuilder = MethodSpec.constructorBuilder();
         methodBuilder.addModifiers(Modifier.PUBLIC);
 
-        final String presenterQualifiedName = mPresenterInterface.getQualifiedName().toString();
+        final String presenterQualifiedName = presenterInterface.getQualifiedName().toString();
         final TypeName type = TypeVariableName.get(presenterQualifiedName);
         final ParameterSpec.Builder parameterBuilder = ParameterSpec.builder(type, "presenter", Modifier.FINAL);
         methodBuilder.addParameter(parameterBuilder.build());
@@ -102,7 +102,7 @@ public class EventsDelegateClass {
         parameterBuilder = ParameterSpec.builder(ClassName.BOOLEAN, "checked", Modifier.FINAL);
         methodBuilder.addParameter(parameterBuilder.build());
 
-        final List<EventHandlerMethod> eventHandlerMethods = mEventHandlerMethods.get(EventHandlerMethod.EventType.ON_CHECKED);
+        final List<EventHandlerMethod> eventHandlerMethods = this.eventHandlerMethods.get(EventHandlerMethod.EventType.ON_CHECKED);
 
         if (eventHandlerMethods != null && !eventHandlerMethods.isEmpty()) {
             boolean isFirstCondition = true;
@@ -116,7 +116,7 @@ public class EventsDelegateClass {
                 } else {
                     methodBuilder.nextControlFlow("else if (tag.equals(\"" + tag + "\"))");
                 }
-                methodBuilder.addStatement("mPresenter." + method.getMethodName() + "(checked)");
+                methodBuilder.addStatement("presenter." + method.getMethodName() + "(checked)");
             }
             methodBuilder.endControlFlow();
         }
@@ -131,7 +131,7 @@ public class EventsDelegateClass {
         final ParameterSpec.Builder parameterBuilder = ParameterSpec.builder(ClassName.get(String.class), "tag", Modifier.FINAL);
         methodBuilder.addParameter(parameterBuilder.build());
 
-        final List<EventHandlerMethod> eventHandlerMethods = mEventHandlerMethods.get(EventHandlerMethod.EventType.ON_CLICK);
+        final List<EventHandlerMethod> eventHandlerMethods = this.eventHandlerMethods.get(EventHandlerMethod.EventType.ON_CLICK);
 
         if (eventHandlerMethods != null && !eventHandlerMethods.isEmpty()) {
             boolean isFirstCondition = true;
@@ -145,7 +145,7 @@ public class EventsDelegateClass {
                 } else {
                     methodBuilder.nextControlFlow("else if (tag.equals(\"" + tag + "\"))");
                 }
-                methodBuilder.addStatement("mPresenter." + method.getMethodName() + "()");
+                methodBuilder.addStatement("presenter." + method.getMethodName() + "()");
             }
             methodBuilder.endControlFlow();
         }
@@ -163,7 +163,7 @@ public class EventsDelegateClass {
         parameterBuilder = ParameterSpec.builder(ClassName.get(String.class), "text", Modifier.FINAL);
         methodBuilder.addParameter(parameterBuilder.build());
 
-        final List<EventHandlerMethod> eventHandlerMethods = mEventHandlerMethods.get(EventHandlerMethod.EventType.ON_TEXT_CHANGED);
+        final List<EventHandlerMethod> eventHandlerMethods = this.eventHandlerMethods.get(EventHandlerMethod.EventType.ON_TEXT_CHANGED);
 
         if (eventHandlerMethods != null && !eventHandlerMethods.isEmpty()) {
             boolean isFirstCondition = true;
@@ -177,38 +177,12 @@ public class EventsDelegateClass {
                 } else {
                     methodBuilder.nextControlFlow("else if (tag.equals(\"" + tag + "\"))");
                 }
-                methodBuilder.addStatement("mPresenter." + method.getMethodName() + "(text)");
+                methodBuilder.addStatement("presenter." + method.getMethodName() + "(text)");
             }
             methodBuilder.endControlFlow();
         }
         classBuilder.addMethod(methodBuilder.build());
     }
-
-    /*
-    private void buildEventDispatcherMethod(final TypeSpec.Builder classBuilder, final EventHandlerMethod eventHandlerMethod) {
-
-        final List<? extends VariableElement> parameters = eventHandlerMethod.getParameters();
-        final String methodName = eventHandlerMethod.getMethodName();
-        final String invocation = createInvocation(parameters, methodName);
-        final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName);
-        methodBuilder.addModifiers(Modifier.PUBLIC);
-
-        for (final VariableElement parameter : parameters) {
-            final TypeName typeName = TypeName.get(parameter.asType());
-            final ParameterSpec.Builder parameterBuilder = ParameterSpec.builder(typeName, parameter.getSimpleName().toString(), Modifier.FINAL);
-            methodBuilder.addParameter(parameterBuilder.build());
-        }
-
-        methodBuilder.beginControlFlow("if (isStateEngine())");
-        methodBuilder.addStatement(String.format("mCurrentState.%s", invocation));
-        methodBuilder.nextControlFlow("else if (mSuperState != getStateEngine())");
-        methodBuilder.addStatement(String.format("mSuperState.%s", invocation));
-        methodBuilder.nextControlFlow("else");
-        methodBuilder.addStatement(String.format("onError(this, StateEngine.Error.ERROR_UNHANDLED_EVENT, \"%s\")", methodName));
-        methodBuilder.endControlFlow();
-        classBuilder.addMethod(methodBuilder.build());
-    }*/
-
 
     private String createInvocation(final List<? extends VariableElement> parameters, final String methodName) {
         final StringBuilder builder = new StringBuilder(methodName);

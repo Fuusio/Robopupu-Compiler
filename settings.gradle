@@ -1,1 +1,2 @@
-include ':api', ':robopupu-compiler'
+// DEV include ':api', ':app', ':robopupu-compiler' // DEV
+include ':api', ':robopupu-compiler' // BINTRAY

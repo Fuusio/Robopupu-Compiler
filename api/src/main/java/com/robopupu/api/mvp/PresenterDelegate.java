@@ -6,10 +6,10 @@ package com.robopupu.api.mvp;
  */
 public abstract class PresenterDelegate<T_Presenter extends Presenter> {
 
-    protected final T_Presenter mPresenter;
+    protected final T_Presenter presenter;
 
     protected PresenterDelegate(final T_Presenter presenter) {
-        mPresenter = presenter;
+        this.presenter = presenter;
     }
 
     protected abstract void onChecked(String tag, boolean checked);

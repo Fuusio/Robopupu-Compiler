@@ -22,33 +22,33 @@ public class EventHandlerMethod {
         ON_TEXT_CHANGED;
     }
 
-    protected final EventType mEventType;
-    protected final ExecutableElement mMethodElement;
-    protected final String mTag;
+    protected final EventType eventType;
+    protected final ExecutableElement methodElement;
+    protected final String tag;
 
     public EventHandlerMethod(final ExecutableElement executableElement, final EventType eventType, final String tag) {
-        mEventType = eventType;
-        mMethodElement = executableElement;
-        mTag = tag;
+        this.eventType = eventType;
+        methodElement = executableElement;
+        this.tag = tag;
     }
 
     public EventType getEventType() {
-        return mEventType;
+        return eventType;
     }
 
     public String getTag() {
-        return mTag;
+        return tag;
     }
 
     public ExecutableElement getMethodElement() {
-        return mMethodElement;
+        return methodElement;
     }
 
     public String getMethodName() {
-        return mMethodElement.getSimpleName().toString();
+        return methodElement.getSimpleName().toString();
     }
 
     public List<? extends VariableElement> getParameters() {
-        return mMethodElement.getParameters();
+        return methodElement.getParameters();
     }
 }

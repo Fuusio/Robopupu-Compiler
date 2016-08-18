@@ -43,24 +43,24 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class PluginAnnotationProcessor extends AbstractProcessor {
 
-    private HashMap<String, PlugInterfaceAnnotatedInterface> mPlugInterfaceAnnotatedInterfaces;
-    private HashMap<String, PluginAnnotatedClass> mPluginAnnotatedClasses;
+    private HashMap<String, PlugInterfaceAnnotatedInterface> plugInterfaceAnnotatedInterfaces;
+    private HashMap<String, PluginAnnotatedClass> pluginAnnotatedClasses;
 
-    private Filer mFiler;
-    private Elements mElementUtils;
-    private ProcessingEnvironment mProcessingEnvironment;
-    private Messager mMessager;
+    private Filer filer;
+    private Elements elementUtils;
+    private ProcessingEnvironment processingEnvironment;
+    private Messager messager;
 
     @Override
     public synchronized void init(final ProcessingEnvironment environment) {
         super.init(environment);
 
-        mFiler = environment.getFiler();
-        mElementUtils = environment.getElementUtils();
-        mMessager = environment.getMessager();
-        mPluginAnnotatedClasses = new HashMap<>();
-        mPlugInterfaceAnnotatedInterfaces = new HashMap<>();
-        mProcessingEnvironment = environment;
+        filer = environment.getFiler();
+        elementUtils = environment.getElementUtils();
+        messager = environment.getMessager();
+        pluginAnnotatedClasses = new HashMap<>();
+        plugInterfaceAnnotatedInterfaces = new HashMap<>();
+        processingEnvironment = environment;
     }
 
     @Override
@@ -91,8 +91,8 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
                 }
             }
 
-            for (final PlugInterfaceAnnotatedInterface annotatedInterface : mPlugInterfaceAnnotatedInterfaces.values()) {
-                annotatedInterface.generateCode(mProcessingEnvironment, mElementUtils, mFiler);
+            for (final PlugInterfaceAnnotatedInterface annotatedInterface : plugInterfaceAnnotatedInterfaces.values()) {
+                annotatedInterface.generateCode(processingEnvironment, elementUtils, filer);
             }
         } catch (ProcessorException e) {
             handleError(e.getElement(), e.getMessage());
@@ -114,12 +114,12 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
                 }
             }
 
-            for (final PluginAnnotatedClass annotatedClass : mPluginAnnotatedClasses.values()) {
-                annotatedClass.generateCode(mProcessingEnvironment, mElementUtils, mFiler);
+            for (final PluginAnnotatedClass annotatedClass : pluginAnnotatedClasses.values()) {
+                annotatedClass.generateCode(processingEnvironment, elementUtils, filer);
             }
 
-            mPluginAnnotatedClasses.clear();
-            mPlugInterfaceAnnotatedInterfaces.clear();
+            pluginAnnotatedClasses.clear();
+            plugInterfaceAnnotatedInterfaces.clear();
         } catch (ProcessorException e) {
             handleError(e.getElement(), e.getMessage());
         } catch (IOException e) {
@@ -134,13 +134,13 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
             final PluginAnnotatedClass annotatedClass = new PluginAnnotatedClass(typeElement);
             final String className = typeElement.getQualifiedName().toString();
 
-            mPluginAnnotatedClasses.put(className, annotatedClass);
+            pluginAnnotatedClasses.put(className, annotatedClass);
 
             List<? extends TypeMirror> interfaces  = typeElement.getInterfaces();
 
             for (final TypeMirror interfaceType : interfaces) {
                 final String interfaceName = interfaceType.toString();
-                final PlugInterfaceAnnotatedInterface interfaceClass = mPlugInterfaceAnnotatedInterfaces.get(interfaceName);
+                final PlugInterfaceAnnotatedInterface interfaceClass = plugInterfaceAnnotatedInterfaces.get(interfaceName);
 
                 if (interfaceClass != null) {
                     annotatedClass.addPlugInterface(interfaceName, interfaceClass);
@@ -190,7 +190,7 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
             final PlugInterfaceAnnotatedInterface annotatedInterface = new PlugInterfaceAnnotatedInterface(typeElement);
             final String className = typeElement.getQualifiedName().toString();
 
-            mPlugInterfaceAnnotatedInterfaces.put(className, annotatedInterface);
+            plugInterfaceAnnotatedInterfaces.put(className, annotatedInterface);
 
             final List<? extends AnnotationMirror> annotationMirrors = typeElement.getAnnotationMirrors();
 
@@ -220,7 +220,7 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
                 annotatedInterface.setPlugMode(plugMode);
             }
 
-            mPlugInterfaceAnnotatedInterfaces.put(className, annotatedInterface);
+            plugInterfaceAnnotatedInterfaces.put(className, annotatedInterface);
         } catch (ProcessorException e) {
             handleError(e.getElement(), e.getMessage());
         }
@@ -233,6 +233,6 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
      * @param errorMessage A {@link String} containing the error message.
      */
     public void handleError(final Element element, final String errorMessage) {
-        mMessager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
+        messager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
     }
 }

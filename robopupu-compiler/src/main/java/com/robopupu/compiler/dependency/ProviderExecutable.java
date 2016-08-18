@@ -12,25 +12,25 @@ import javax.lang.model.element.VariableElement;
  */
 public abstract class ProviderExecutable {
 
-    protected final ExecutableElement mExecutableElement;
-    protected final AnnotationMirror mProvidesAnnotation;
+    protected final ExecutableElement executableElement;
+    protected final AnnotationMirror providesAnnotation;
 
     public ProviderExecutable(final ExecutableElement executableElement, final AnnotationMirror providesAnnotation) {
-        mExecutableElement = executableElement;
-        mProvidesAnnotation = providesAnnotation;
+        this.executableElement = executableElement;
+        this.providesAnnotation = providesAnnotation;
     }
 
     public ExecutableElement getExecutableElement() {
-        return mExecutableElement;
+        return executableElement;
     }
 
     public List<? extends VariableElement> getParameters() {
-        return mExecutableElement.getParameters();
+        return executableElement.getParameters();
     }
 
     public abstract String getProvidedType();
 
     public boolean hasParameters() {
-        return !mExecutableElement.getParameters().isEmpty();
+        return !executableElement.getParameters().isEmpty();
     }
 }

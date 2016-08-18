@@ -17,21 +17,21 @@ public class ProviderConstructor extends ProviderExecutable {
     }
 
     public String getConstructorName() {
-        return mExecutableElement.getEnclosingElement().asType().toString();
+        return executableElement.getEnclosingElement().asType().toString();
     }
 
     @Override
     public String getProvidedType() {
-        if (mProvidesAnnotation == null) {
-            return mExecutableElement.getEnclosingElement().asType().toString();
+        if (providesAnnotation == null) {
+            return executableElement.getEnclosingElement().asType().toString();
         } else {
-            Collection<? extends AnnotationValue> values = mProvidesAnnotation.getElementValues().values();
+            Collection<? extends AnnotationValue> values = providesAnnotation.getElementValues().values();
             final AnnotationValue value = values.iterator().next();
             return value.toString().replace(".class", "");
         }
     }
 
     public String getType() {
-        return mExecutableElement.getEnclosingElement().asType().toString();
+        return executableElement.getEnclosingElement().asType().toString();
     }
 }

@@ -35,30 +35,30 @@ public class DependencyProviderClass {
     private static final ClassName CLASS_DEPENDENCY_PROVIDER = ClassName.get(DependencyProvider.class);
     private static final ClassName CLASS_DEPENDENCY_QUERY = ClassName.get(DependencyQuery.class);
 
-    private final String mClassName;
-    private final TypeElement mClassElement;
-    private final ArrayList<ProviderClass> mProviderClasses;
-    private final ArrayList<ProviderConstructor> mProviderConstructors;
-    private final ArrayList<ProviderMethod> mProviderMethods;
+    private final String className;
+    private final TypeElement classElement;
+    private final ArrayList<ProviderClass> providerClasses;
+    private final ArrayList<ProviderConstructor> providerConstructors;
+    private final ArrayList<ProviderMethod> providerMethods;
 
     public DependencyProviderClass(final TypeElement classElement) throws ProcessorException {
-        mClassElement = classElement;
-        mClassName = classElement.getSimpleName().toString();
-        mProviderClasses = new ArrayList<>();
-        mProviderConstructors = new ArrayList<>();
-        mProviderMethods = new ArrayList<>();
+        this.classElement = classElement;
+        className = classElement.getSimpleName().toString();
+        providerClasses = new ArrayList<>();
+        providerConstructors = new ArrayList<>();
+        providerMethods = new ArrayList<>();
     }
 
     public void addProviderClass(final ProviderClass providerClass) {
-        mProviderClasses.add(providerClass);
+        providerClasses.add(providerClass);
     }
 
     public void addProviderConstructor(final ProviderConstructor providerConstructor) {
-        mProviderConstructors.add(providerConstructor);
+        providerConstructors.add(providerConstructor);
     }
 
     public void addProviderMethod(final ProviderMethod providerMethod) {
-        mProviderMethods.add(providerMethod);
+        providerMethods.add(providerMethod);
     }
 
     /**
@@ -71,15 +71,15 @@ public class DependencyProviderClass {
 
         // Check if there is need to generate code for a DependencyProvider implementation
 
-        if (mProviderClasses.isEmpty() && mProviderConstructors.isEmpty() && mProviderMethods.isEmpty()) {
+        if (providerClasses.isEmpty() && providerConstructors.isEmpty() && providerMethods.isEmpty()) {
             return;
         }
 
         // Generate code for a DependencyProvider implementation
 
-        final PackageElement packageElement = elementUtils.getPackageOf(mClassElement);
+        final PackageElement packageElement = elementUtils.getPackageOf(classElement);
         final String packageName = packageElement.isUnnamed() ? "" : packageElement.getQualifiedName().toString();
-        final String suffixedClassName = mClassName + SUFFIX_DEPENDENCY_PROVIDER;
+        final String suffixedClassName = className + SUFFIX_DEPENDENCY_PROVIDER;
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(suffixedClassName);
 
         classBuilder.superclass(CLASS_DEPENDENCY_PROVIDER);
@@ -104,7 +104,7 @@ public class DependencyProviderClass {
         methodBuilder.addParameter(parameterizedType, "query", Modifier.FINAL);
         methodBuilder.returns(TypeVariableName.get("<T> void"));
 
-        for (final ProviderClass providerClass : mProviderClasses) {
+        for (final ProviderClass providerClass : providerClasses) {
 
             final String providedType = providerClass.getProvidedType();
             final String implementationType = providerClass.getType();
@@ -125,7 +125,7 @@ public class DependencyProviderClass {
             methodBuilder.endControlFlow();
         }
 
-        for (final ProviderMethod providerMethod : mProviderMethods) {
+        for (final ProviderMethod providerMethod : providerMethods) {
 
             final String providedType = providerMethod.getProvidedType();
             final String implementationType = providerMethod.getReturnType(); // XXX
@@ -147,7 +147,7 @@ public class DependencyProviderClass {
 
                 writer.c().a("if (query.add((T) ((");
                 writer.a(providerMethod.getDependencyScopeType());
-                writer.a(")mScope).").a(providerMethod.getMethodName()).a("(");
+                writer.a(")scope).").a(providerMethod.getMethodName()).a("(");
 
                 int index = 0;
 
@@ -163,7 +163,7 @@ public class DependencyProviderClass {
                 writer.c().a("if (query.add((T) ((");
 
                 writer.a(providerMethod.getDependencyScopeType());
-                writer.a(")mScope).").a(providerMethod.getMethodName()).a("()))");
+                writer.a(")scope).").a(providerMethod.getMethodName()).a("()))");
             }
 
             methodBuilder.beginControlFlow(writer.getCode());
@@ -172,7 +172,7 @@ public class DependencyProviderClass {
             methodBuilder.endControlFlow();
         }
 
-        for (final ProviderConstructor providerConstructor : mProviderConstructors) {
+        for (final ProviderConstructor providerConstructor : providerConstructors) {
 
             final String providedType = providerConstructor.getProvidedType();
             final String implementationType = providerConstructor.getType();
@@ -219,7 +219,7 @@ public class DependencyProviderClass {
     }
 
     public String getPackageName(final Elements elementUtils) {
-        final PackageElement packageElement = elementUtils.getPackageOf(mClassElement);
+        final PackageElement packageElement = elementUtils.getPackageOf(classElement);
         return packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
     }
 }

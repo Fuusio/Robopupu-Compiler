@@ -36,29 +36,29 @@ public class PluginAnnotatedClass {
     private static final ClassName CLASS_NAME_PLUGIN_BUS = ClassName.get("com.robopupu.api.plugin", "PluginBus");
     private static final ClassName CLASS_NAME_PLUG_INVOKER = ClassName.get("com.robopupu.api.plugin", "PlugInvoker");
 
-    private final String mAnnotatedClassName;
-    private final HashMap<String, PlugAnnotatedField> mPlugFields;
-    private final HashMap<String, PlugInterfaceAnnotatedInterface> mPlugInterfaces;
-    private final TypeElement mTypeElement;
+    private final String annotatedClassName;
+    private final HashMap<String, PlugAnnotatedField> plugFields;
+    private final HashMap<String, PlugInterfaceAnnotatedInterface> plugInterfaces;
+    private final TypeElement typeElement;
 
     public PluginAnnotatedClass(final TypeElement typeElement) throws com.robopupu.compiler.util.ProcessorException {
-        mTypeElement = typeElement;
-        mAnnotatedClassName = typeElement.getSimpleName().toString();
-        mPlugFields = new HashMap<>();
-        mPlugInterfaces = new HashMap<>();
+        this.typeElement = typeElement;
+        annotatedClassName = typeElement.getSimpleName().toString();
+        plugFields = new HashMap<>();
+        plugInterfaces = new HashMap<>();
     }
 
     public void addPlugField(final String fieldName, final TypeMirror fieldType, final String scopeClass) {
         final PlugAnnotatedField field = new PlugAnnotatedField(fieldType, scopeClass);
-        mPlugFields.put(fieldName, field);
+        plugFields.put(fieldName, field);
     }
 
     public void addPlugInterface(final String interfaceName, final PlugInterfaceAnnotatedInterface annotatedInterface) {
-        mPlugInterfaces.put(interfaceName, annotatedInterface);
+        plugInterfaces.put(interfaceName, annotatedInterface);
     }
 
     public TypeElement getTypeElement() {
-        return mTypeElement;
+        return typeElement;
     }
 
     public void generateCode(final ProcessingEnvironment environment, final Elements elementUtils, final Filer filer) throws IOException {
@@ -67,9 +67,9 @@ public class PluginAnnotatedClass {
 
     private void generatePlugger(final ProcessingEnvironment environment, final Elements elementUtils, final Filer filer) throws IOException {
 
-        final PackageElement packageElement = elementUtils.getPackageOf(mTypeElement);
+        final PackageElement packageElement = elementUtils.getPackageOf(typeElement);
         final String packageName = packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
-        final String suffixedClassName = mAnnotatedClassName + SUFFIX_PLUGGER;
+        final String suffixedClassName = annotatedClassName + SUFFIX_PLUGGER;
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(suffixedClassName);
         classBuilder.addSuperinterface(CLASS_NAME_PLUGGER);
         classBuilder.addModifiers(Modifier.PUBLIC);
@@ -96,8 +96,8 @@ public class PluginAnnotatedClass {
 
         com.robopupu.compiler.util.JavaWriter writer = new com.robopupu.compiler.util.JavaWriter();
 
-        writer.k(com.robopupu.compiler.util.Keyword.FINAL).a(mAnnotatedClassName);
-        writer.a(" typedPlugin = (").a(mAnnotatedClassName).a(") plugin");
+        writer.k(com.robopupu.compiler.util.Keyword.FINAL).a(annotatedClassName);
+        writer.a(" typedPlugin = (").a(annotatedClassName).a(") plugin");
         methodBuilder.addStatement(writer.getCode());
 
         buildPlugFieldSetStatements(methodBuilder);
@@ -108,8 +108,8 @@ public class PluginAnnotatedClass {
 
     private void buildPlugFieldSetStatements(final MethodSpec.Builder methodBuilder) {
 
-        for (final String fieldName : mPlugFields.keySet()) {
-            final PlugAnnotatedField field = mPlugFields.get(fieldName);
+        for (final String fieldName : plugFields.keySet()) {
+            final PlugAnnotatedField field = plugFields.get(fieldName);
             final String localPlugFieldName = PREFIX_PLUG + fieldName;
             final String interfaceSimpleName = field.getFieldType().toString();
 
@@ -160,11 +160,11 @@ public class PluginAnnotatedClass {
     }
 
     private void buildPlugAddStatements(final MethodSpec.Builder methodBuilder) {
-        for (final String interfaceName : mPlugInterfaces.keySet()) {
+        for (final String interfaceName : plugInterfaces.keySet()) {
 
             methodBuilder.addCode("\n");
 
-            final PlugInterfaceAnnotatedInterface annotatedInterface = mPlugInterfaces.get(interfaceName);
+            final PlugInterfaceAnnotatedInterface annotatedInterface = plugInterfaces.get(interfaceName);
             final TypeElement pluginInterface = annotatedInterface.getTypeElement();
             final String interfaceSimpleName = pluginInterface.getSimpleName().toString();
             final String interfaceQualifiedSimpleName = pluginInterface.getQualifiedName().toString();
@@ -203,8 +203,8 @@ public class PluginAnnotatedClass {
 
         com.robopupu.compiler.util.JavaWriter writer = new com.robopupu.compiler.util.JavaWriter();
 
-        writer.k(com.robopupu.compiler.util.Keyword.FINAL).a(mAnnotatedClassName);
-        writer.a(" typedPlugin = (").a(mAnnotatedClassName).a(") plugin");
+        writer.k(com.robopupu.compiler.util.Keyword.FINAL).a(annotatedClassName);
+        writer.a(" typedPlugin = (").a(annotatedClassName).a(") plugin");
         methodBuilder.addStatement(writer.getCode());
         methodBuilder.addCode("\n");
 
@@ -215,7 +215,7 @@ public class PluginAnnotatedClass {
     }
 
     private void buildPlugFieldResetStatements(final MethodSpec.Builder methodBuilder) {
-        for (final String fieldName : mPlugFields.keySet()) {
+        for (final String fieldName : plugFields.keySet()) {
             com.robopupu.compiler.util.JavaWriter writer = new com.robopupu.compiler.util.JavaWriter();
             writer.a("typedPlugin.").a(fieldName).a(" = null");
             methodBuilder.addStatement(writer.getCode());
@@ -225,9 +225,9 @@ public class PluginAnnotatedClass {
 
     private void buildPlugRemoveStatements(final MethodSpec.Builder methodBuilder) {
 
-        for (final String interfaceName : mPlugInterfaces.keySet()) {
+        for (final String interfaceName : plugInterfaces.keySet()) {
 
-            final PlugInterfaceAnnotatedInterface annotatedInterface = mPlugInterfaces.get(interfaceName);
+            final PlugInterfaceAnnotatedInterface annotatedInterface = plugInterfaces.get(interfaceName);
             final TypeElement pluginInterface = annotatedInterface.getTypeElement();
             final String interfaceSimpleName = pluginInterface.getSimpleName().toString();
             final String interfaceQualifiedSimpleName = pluginInterface.getQualifiedName().toString();

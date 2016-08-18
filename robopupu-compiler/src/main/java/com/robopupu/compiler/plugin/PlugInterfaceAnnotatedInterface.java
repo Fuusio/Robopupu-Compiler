@@ -48,33 +48,33 @@ public class PlugInterfaceAnnotatedInterface {
     private static final ClassName CLASS_PLUG_INVOKER = ClassName.get(PlugInvoker.class);
     private static final ClassName CLASS_VIEW_PLUG_INVOKER = ClassName.get(ViewPlugInvoker.class);
 
-    private final TypeElement mTypeElement;
-    private final boolean mIsViewInterface;
+    private final TypeElement typeElement;
+    private final boolean isViewInterface;
 
-    private Types mTypeUtils;
-    private PlugMode mPlugMode;
+    private Types typeUtils;
+    private PlugMode plugMode;
 
     public PlugInterfaceAnnotatedInterface(final TypeElement typeElement) throws com.robopupu.compiler.util.ProcessorException {
-        mTypeElement = typeElement;
-        mIsViewInterface = isViewInterface(mTypeElement);
+        this.typeElement = typeElement;
+        isViewInterface = isViewInterface(this.typeElement);
     }
 
     public TypeElement getTypeElement() {
-        return mTypeElement;
+        return typeElement;
     }
 
     public PlugMode getPlugMode() {
-        return mPlugMode;
+        return plugMode;
     }
 
     public void setPlugMode(final PlugMode plugMode) {
-        mPlugMode = plugMode;
+        this.plugMode = plugMode;
     }
 
     public void generateCode(final ProcessingEnvironment environment, final Elements elementUtils, final Filer filer) throws IOException {
-        mTypeUtils = environment.getTypeUtils();
+        typeUtils = environment.getTypeUtils();
 
-        if (mPlugMode.isBroadcast()) {
+        if (plugMode.isBroadcast()) {
             generateHandlerInvoker(environment, elementUtils, filer);
         }
         generatePlugInvoker(environment, elementUtils, filer);
@@ -82,10 +82,10 @@ public class PlugInterfaceAnnotatedInterface {
 
     private void generateHandlerInvoker(final ProcessingEnvironment environment, final Elements elementUtils, final Filer filer) throws IOException {
 
-        final PackageElement packageElement = elementUtils.getPackageOf(mTypeElement);
+        final PackageElement packageElement = elementUtils.getPackageOf(typeElement);
         final String packageName = packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
-        final ClassName interfaceName = ClassName.get(mTypeElement);
-        final String suffixedClassName = mTypeElement.getSimpleName() + SUFFIX_HANDLER_INVOKER;
+        final ClassName interfaceName = ClassName.get(typeElement);
+        final String suffixedClassName = typeElement.getSimpleName() + SUFFIX_HANDLER_INVOKER;
         final ParameterizedTypeName superClassName = ParameterizedTypeName.get(CLASS_HANDLER_INVOKER, interfaceName);
 
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(suffixedClassName);
@@ -95,16 +95,16 @@ public class PlugInterfaceAnnotatedInterface {
 
         final TypeName looperTypeName = TypeVariableName.get("android.os.Looper");
         final TypeName handlerTypeName = TypeVariableName.get("android.os.Handler");
-        final FieldSpec.Builder handlerFieldSpec = FieldSpec.builder(handlerTypeName, "mHandler", Modifier.PRIVATE, Modifier.FINAL);
+        final FieldSpec.Builder handlerFieldSpec = FieldSpec.builder(handlerTypeName, "handler", Modifier.PRIVATE, Modifier.FINAL);
 
         classBuilder.addField(handlerFieldSpec.build());
 
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
         constructorBuilder.addModifiers(Modifier.PUBLIC);
-        constructorBuilder.addStatement("mHandler = new $T($T.getMainLooper())", handlerTypeName, looperTypeName);
+        constructorBuilder.addStatement("handler = new $T($T.getMainLooper())", handlerTypeName, looperTypeName);
         classBuilder.addMethod(constructorBuilder.build());
 
-        final List<? extends Element> enclosedElements = mTypeElement.getEnclosedElements();
+        final List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
         final List<ExecutableElement> methodElements = new ArrayList<>();
 
         for (final Element element : enclosedElements) {
@@ -116,12 +116,12 @@ public class PlugInterfaceAnnotatedInterface {
 
         final List<TypeMirror> interfaces = new ArrayList<>();
 
-        for (final TypeMirror interfaceTypeMirror : mTypeElement.getInterfaces()) {
+        for (final TypeMirror interfaceTypeMirror : typeElement.getInterfaces()) {
             collectInterfaces(interfaceTypeMirror, interfaces);
         }
 
         for (final TypeMirror interfaceTypeMirror : interfaces) {
-            final TypeElement interfaceTypeElement = (TypeElement)mTypeUtils.asElement(interfaceTypeMirror);
+            final TypeElement interfaceTypeElement = (TypeElement) typeUtils.asElement(interfaceTypeMirror);
 
             for (final Element element : interfaceTypeElement.getEnclosedElements()) {
 
@@ -152,11 +152,11 @@ public class PlugInterfaceAnnotatedInterface {
                 methodBuilder.addStatement("throw new IllegalStateException(\"Invocation via a Handler to main thread cannot return a value.\")");
                 classBuilder.addMethod(methodBuilder.build());
             } else {
-                methodBuilder.beginControlFlow("mHandler.post(new Runnable()");
+                methodBuilder.beginControlFlow("handler.post(new Runnable()");
                 methodBuilder.beginControlFlow("@Override public void run()");
                 com.robopupu.compiler.util.JavaWriter writer = new com.robopupu.compiler.util.JavaWriter();
 
-                writer.a("mPlugin.").a(methodName).a("(");
+                writer.a("plugin.").a(methodName).a("(");
 
                 final int parameterCount = parameterElements.size();
 
@@ -192,7 +192,7 @@ public class PlugInterfaceAnnotatedInterface {
     private void collectInterfaces(final TypeMirror interfaceTypeMirror, final List<TypeMirror> interfaces) {
         interfaces.add(interfaceTypeMirror);
 
-        final Element element = mTypeUtils.asElement(interfaceTypeMirror);
+        final Element element = typeUtils.asElement(interfaceTypeMirror);
         final TypeElement typeElement = (TypeElement)element;
 
         for (final TypeMirror typeMirror : typeElement.getInterfaces()) {
@@ -202,11 +202,11 @@ public class PlugInterfaceAnnotatedInterface {
 
     private void generatePlugInvoker(final ProcessingEnvironment environment, final Elements elementUtils, final Filer filer) throws IOException {
 
-        final PackageElement packageElement = elementUtils.getPackageOf(mTypeElement);
+        final PackageElement packageElement = elementUtils.getPackageOf(typeElement);
         final String packageName = packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
-        final ClassName interfaceName = ClassName.get(mTypeElement);
-        final String suffixedClassName = mTypeElement.getSimpleName() + SUFFIX_PLUG_INVOKER;
-        final ClassName pluginInvokerClass = mIsViewInterface ? CLASS_VIEW_PLUG_INVOKER : CLASS_PLUG_INVOKER;
+        final ClassName interfaceName = ClassName.get(typeElement);
+        final String suffixedClassName = typeElement.getSimpleName() + SUFFIX_PLUG_INVOKER;
+        final ClassName pluginInvokerClass = isViewInterface ? CLASS_VIEW_PLUG_INVOKER : CLASS_PLUG_INVOKER;
         final ParameterizedTypeName superClassName = ParameterizedTypeName.get(pluginInvokerClass, interfaceName);
 
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(suffixedClassName);
@@ -214,7 +214,7 @@ public class PlugInterfaceAnnotatedInterface {
         classBuilder.addSuperinterface(interfaceName);
         classBuilder.addModifiers(Modifier.PUBLIC);
 
-        final List<? extends Element> enclosedElements = mTypeElement.getEnclosedElements();
+        final List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
         final List<ExecutableElement> methodElements = new ArrayList<>();
 
         for (final Element element : enclosedElements) {
@@ -230,12 +230,12 @@ public class PlugInterfaceAnnotatedInterface {
 
         final List<TypeMirror> interfaces = new ArrayList<>();
 
-        for (final TypeMirror interfaceTypeMirror : mTypeElement.getInterfaces()) {
+        for (final TypeMirror interfaceTypeMirror : typeElement.getInterfaces()) {
             collectInterfaces(interfaceTypeMirror, interfaces);
         }
 
         for (final TypeMirror interfaceTypeMirror : interfaces) {
-            final TypeElement interfaceTypeElement = (TypeElement)mTypeUtils.asElement(interfaceTypeMirror);
+            final TypeElement interfaceTypeElement = (TypeElement) typeUtils.asElement(interfaceTypeMirror);
 
             for (final Element element : interfaceTypeElement.getEnclosedElements()) {
                 if (element.getKind() == ElementKind.METHOD) {
@@ -272,20 +272,20 @@ public class PlugInterfaceAnnotatedInterface {
             boolean writeInvocation = true;
 
             if (returnsValue) {
-                if (mPlugMode.isBroadcast()) {
+                if (plugMode.isBroadcast()) {
                     writeInvocation = false;
                     methodBuilder.addStatement("throw new IllegalStateException(\"Invocation via a Handler to main thread cannot return a value.\")");
                 } else {
-                    methodBuilder.beginControlFlow("if (mPlugins.size() > 0)");
-                    writer.k(com.robopupu.compiler.util.Keyword.RETURN).a("mPlugins.get(0).");
+                    methodBuilder.beginControlFlow("if (plugins.size() > 0)");
+                    writer.k(com.robopupu.compiler.util.Keyword.RETURN).a("plugins.get(0).");
                 }
             } else {
-                if (mPlugMode.isBroadcast()) {
+                if (plugMode.isBroadcast()) {
                     methodBuilder.beginControlFlow("for (int i = last(); i >= 0; i--)");
-                    writer.a("mPlugins.get(i).");
+                    writer.a("plugins.get(i).");
                 } else {
-                    methodBuilder.beginControlFlow("if (mPlugins.size() > 0)");
-                    writer.a("mPlugins.get(0).");
+                    methodBuilder.beginControlFlow("if (plugins.size() > 0)");
+                    writer.a("plugins.get(0).");
                 }
             }
 
@@ -312,14 +312,13 @@ public class PlugInterfaceAnnotatedInterface {
 
                 methodBuilder.addStatement(writer.getCode());
 
-                if (mPlugMode.isBroadcast() && !returnsValue) {
+                if (plugMode.isBroadcast() && !returnsValue) {
                     methodBuilder.endControlFlow();
                 } else {
                     methodBuilder.endControlFlow();
 
                     if (returnsValue) {
                         writer.clear();
-                        // writer.k(com.robopupu.compiler.util.Keyword.THROW).k(com.robopupu.compiler.util.Keyword.NEW).a("NullPointerException(\"Invocation target not available.\")");
                         writer.a("handleInvocationTargetNotAvailable(").a(returnsValue).a(")");
                         methodBuilder.addStatement(writer.getCode());
 
@@ -338,7 +337,7 @@ public class PlugInterfaceAnnotatedInterface {
     }
 
     private boolean isInvokerMethodCreatedFor(final ExecutableElement methodElement) {
-        if (mIsViewInterface) {
+        if (isViewInterface) {
             if (returnsValue(methodElement)) {
                 final String methodName = methodElement.getSimpleName().toString();
                 final int parameterCount = getParameterCount(methodElement);
