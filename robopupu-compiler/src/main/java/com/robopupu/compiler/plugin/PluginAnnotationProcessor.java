@@ -1,7 +1,6 @@
 package com.robopupu.compiler.plugin;
 
 import com.google.auto.service.AutoService;
-
 import com.robopupu.api.plugin.Plug;
 import com.robopupu.api.plugin.PlugInterface;
 import com.robopupu.api.plugin.PlugMode;
@@ -40,6 +39,7 @@ import javax.tools.Diagnostic;
  * to generate runtime objects from classes annotated using (@link PluginInterface} and
  * {@link Plugin} annotations.
  */
+@SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class PluginAnnotationProcessor extends AbstractProcessor {
 
@@ -232,7 +232,7 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
      * @param element The {@link Element} for which the error was detected. May be {@code null}.
      * @param errorMessage A {@link String} containing the error message.
      */
-    public void handleError(final Element element, final String errorMessage) {
+    private void handleError(final Element element, final String errorMessage) {
         messager.printMessage(Diagnostic.Kind.ERROR, errorMessage, element);
     }
 }

@@ -62,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
             public List method4(String p1, boolean p2, List p3) {
                 return null;
             }
+
+            @Override
+            public <S extends String, T extends List<?>> void foo(S string, T list) {
+
+            }
         };
     }
 

@@ -17,4 +17,6 @@ public interface SampleInterface extends FooInterface {
     char method3(String p1, boolean p2, List p3);
 
     List method4(String p1, boolean p2, List p3);
+
+    <S extends String, T extends List<?>> void foo(S string, T list);
 }

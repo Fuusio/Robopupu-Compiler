@@ -45,4 +45,9 @@ public class SampleComponent implements SampleInterface {
     public boolean foo2(int a) {
         return false;
     }
+
+    @Override
+    public <S extends String, T extends List<?>> void foo(S string, T list) {
+
+    }
 }

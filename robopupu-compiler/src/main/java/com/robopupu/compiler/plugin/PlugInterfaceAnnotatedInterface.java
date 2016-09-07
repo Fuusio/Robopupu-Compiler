@@ -2,6 +2,7 @@ package com.robopupu.compiler.plugin;
 
 import com.robopupu.api.mvp.View;
 import com.robopupu.api.mvp.ViewPlugInvoker;
+import com.robopupu.compiler.util.JavaWriter;
 import com.robopupu.compiler.util.Keyword;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -26,8 +27,10 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -154,7 +157,7 @@ public class PlugInterfaceAnnotatedInterface {
             } else {
                 methodBuilder.beginControlFlow("handler.post(new Runnable()");
                 methodBuilder.beginControlFlow("@Override public void run()");
-                com.robopupu.compiler.util.JavaWriter writer = new com.robopupu.compiler.util.JavaWriter();
+                JavaWriter writer = new JavaWriter();
 
                 writer.a("plugin.").a(methodName).a("(");
 
@@ -256,6 +259,23 @@ public class PlugInterfaceAnnotatedInterface {
             methodBuilder.addModifiers(Modifier.PUBLIC);
             methodBuilder.addAnnotation(Override.class);
 
+            final List<? extends TypeParameterElement> typeParameters = methodElement.getTypeParameters();
+
+            if (!typeParameters.isEmpty()) {
+                for (final TypeParameterElement typeParameter : typeParameters) {
+                    final String simpleName = typeParameter.getSimpleName().toString();
+                    final List<? extends TypeMirror> boundsMirrors = typeParameter.getBounds();
+                    final List<TypeName> boundsTypeNames = new ArrayList<>();
+
+                    for (TypeMirror typeMirror : boundsMirrors) {
+                        boundsTypeNames.add(TypeName.get(typeMirror));
+                    }
+
+                    final TypeVariableName typeVariableName = TypeVariableName.get(simpleName).withBounds(boundsTypeNames);
+                    methodBuilder.addTypeVariable(typeVariableName);
+                }
+            }
+
             if (returnsValue) {
                 methodBuilder.returns(TypeName.get(returnType));
             }
@@ -267,7 +287,7 @@ public class PlugInterfaceAnnotatedInterface {
                 methodBuilder.addParameter(type, parameterElement.getSimpleName().toString(), Modifier.FINAL);
             }
 
-            final com.robopupu.compiler.util.JavaWriter writer = new com.robopupu.compiler.util.JavaWriter();
+            final JavaWriter writer = new JavaWriter();
 
             boolean writeInvocation = true;
 
