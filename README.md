@@ -20,6 +20,9 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 ## Installation
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
+### 0.5.1
+* Updated code generators to use the refactored field names and API changes in Robopupu API.
+
 ### 0.5.0
 * Updated the version to match Robopupu Android library version 0.5.0
 
