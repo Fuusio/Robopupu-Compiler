@@ -22,7 +22,7 @@ Please follow the installation instructions available in [Robopupu Github reposi
 
 ### 0.5.2
 * Added support for generic methods with type parameters in Robopupu.Plugin API.
-* 
+ 
 ### 0.5.1
 * Updated code generators to use the refactored field names and API changes in Robopupu API.
 
