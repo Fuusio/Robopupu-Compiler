@@ -18,7 +18,7 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/Fuusio/Robopupu-Compiler.git'
         version {
-            name = '0.5.2'
+            name = '0.5.3'
         }
     }
 }
@@ -29,7 +29,7 @@ publishing {
             from components.java
             groupId 'com.robopupu'
             artifactId 'robopupu-compiler'
-            version '0.5.2'
+            version '0.5.3'
         }
     }
 }

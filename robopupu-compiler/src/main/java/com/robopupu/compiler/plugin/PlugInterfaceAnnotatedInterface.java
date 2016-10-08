@@ -207,15 +207,36 @@ public class PlugInterfaceAnnotatedInterface {
 
         final PackageElement packageElement = elementUtils.getPackageOf(typeElement);
         final String packageName = packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
+        final String suffixedClassName = typeElement.getSimpleName() + SUFFIX_PLUG_INVOKER;;
         final ClassName interfaceName = ClassName.get(typeElement);
-        final String suffixedClassName = typeElement.getSimpleName() + SUFFIX_PLUG_INVOKER;
         final ClassName pluginInvokerClass = isViewInterface ? CLASS_VIEW_PLUG_INVOKER : CLASS_PLUG_INVOKER;
         final ParameterizedTypeName superClassName = ParameterizedTypeName.get(pluginInvokerClass, interfaceName);
 
         final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(suffixedClassName);
         classBuilder.superclass(superClassName);
-        classBuilder.addSuperinterface(interfaceName);
         classBuilder.addModifiers(Modifier.PUBLIC);
+
+        List<? extends TypeParameterElement> typeParameters = typeElement.getTypeParameters();
+
+        if (!typeParameters.isEmpty()) {
+            for (final TypeParameterElement typeParameter : typeParameters) {
+                final String simpleName = typeParameter.getSimpleName().toString();
+                final List<? extends TypeMirror> boundsMirrors = typeParameter.getBounds();
+                final List<TypeName> boundsTypeNames = new ArrayList<>();
+
+                for (TypeMirror typeMirror : boundsMirrors) {
+                    boundsTypeNames.add(TypeName.get(typeMirror));
+                }
+
+                final TypeVariableName typeVariableName = TypeVariableName.get(simpleName).withBounds(boundsTypeNames);
+                classBuilder.addTypeVariable(typeVariableName);
+
+                final ParameterizedTypeName parameterizedInterfaceName = ParameterizedTypeName.get(interfaceName, TypeVariableName.get(simpleName));
+                classBuilder.addSuperinterface(parameterizedInterfaceName);
+            }
+        } else {
+            classBuilder.addSuperinterface(interfaceName);
+        }
 
         final List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
         final List<ExecutableElement> methodElements = new ArrayList<>();
@@ -240,6 +261,24 @@ public class PlugInterfaceAnnotatedInterface {
         for (final TypeMirror interfaceTypeMirror : interfaces) {
             final TypeElement interfaceTypeElement = (TypeElement) typeUtils.asElement(interfaceTypeMirror);
 
+            typeParameters = interfaceTypeElement.getTypeParameters();
+
+            if (!typeParameters.isEmpty()) {
+                for (final TypeParameterElement typeParameter : typeParameters) {
+                    final String simpleName = typeParameter.getSimpleName().toString();
+                    final List<? extends TypeMirror> boundsMirrors = typeParameter.getBounds();
+                    final List<TypeName> boundsTypeNames = new ArrayList<>();
+
+                    for (TypeMirror typeMirror : boundsMirrors) {
+                        boundsTypeNames.add(TypeName.get(typeMirror));
+                    }
+
+                    final TypeVariableName typeVariableName = TypeVariableName.get(simpleName).withBounds(boundsTypeNames);
+                    //classBuilder.addTypeVariable(typeVariableName);
+                }
+            }
+
+
             for (final Element element : interfaceTypeElement.getEnclosedElements()) {
                 if (element.getKind() == ElementKind.METHOD) {
                     final ExecutableElement methodElement = (ExecutableElement) element;
@@ -259,7 +298,7 @@ public class PlugInterfaceAnnotatedInterface {
             methodBuilder.addModifiers(Modifier.PUBLIC);
             methodBuilder.addAnnotation(Override.class);
 
-            final List<? extends TypeParameterElement> typeParameters = methodElement.getTypeParameters();
+            typeParameters = methodElement.getTypeParameters();
 
             if (!typeParameters.isEmpty()) {
                 for (final TypeParameterElement typeParameter : typeParameters) {
