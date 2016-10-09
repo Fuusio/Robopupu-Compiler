@@ -20,8 +20,11 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 ## Installation
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
+### 0.5.3
+* Added support for using type parameters in interfaces annotated with @PluginInterface.
+
 ### 0.5.2
-* Added support for generic methods with type parameters in Robopupu.Plugin API.
+* Added support for generic methods with type parametersin Robopupu.Plugin API.
  
 ### 0.5.1
 * Updated code generators to use the refactored field names and API changes in Robopupu API.
