@@ -5,6 +5,6 @@ import com.robopupu.api.plugin.PlugInterface;
 /**
  * {@link ListModelObserver} ...
  */
-// @PlugInterface
+@PlugInterface
 public interface ListModelObserver extends ModelObserver<ListModel> {
 }

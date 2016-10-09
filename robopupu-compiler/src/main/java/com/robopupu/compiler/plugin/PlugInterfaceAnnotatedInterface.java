@@ -2,8 +2,12 @@ package com.robopupu.compiler.plugin;
 
 import com.robopupu.api.mvp.View;
 import com.robopupu.api.mvp.ViewPlugInvoker;
+import com.robopupu.api.plugin.PlugInterface;
+import com.robopupu.api.plugin.PlugInvoker;
+import com.robopupu.api.plugin.PlugMode;
 import com.robopupu.compiler.util.JavaWriter;
 import com.robopupu.compiler.util.Keyword;
+import com.robopupu.compiler.util.StringToolkit;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -13,12 +17,9 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-import com.robopupu.api.plugin.PlugInterface;
-import com.robopupu.api.plugin.PlugInvoker;
-import com.robopupu.api.plugin.PlugMode;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.processing.Filer;
@@ -27,7 +28,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
@@ -252,32 +252,35 @@ public class PlugInterfaceAnnotatedInterface {
             }
         }
 
-        final List<TypeMirror> interfaces = new ArrayList<>();
+        final List<TypeMirror> allInterfaces = new ArrayList<>();
+        final List<? extends TypeMirror> extendedInterfaces = typeElement.getInterfaces();
 
-        for (final TypeMirror interfaceTypeMirror : typeElement.getInterfaces()) {
-            collectInterfaces(interfaceTypeMirror, interfaces);
+        for (final TypeMirror interfaceTypeMirror : extendedInterfaces) {
+            collectInterfaces(interfaceTypeMirror, allInterfaces);
         }
 
-        for (final TypeMirror interfaceTypeMirror : interfaces) {
+        final HashMap<String, TypeMirror> parameterTypeMappings = new HashMap<>();
+
+        for (final TypeMirror interfaceTypeMirror : extendedInterfaces) {
+            final DeclaredType interfaceDeclaredType = ((DeclaredType)interfaceTypeMirror);
             final TypeElement interfaceTypeElement = (TypeElement) typeUtils.asElement(interfaceTypeMirror);
 
+            List<? extends TypeMirror> typeArguments = interfaceDeclaredType.getTypeArguments();
             typeParameters = interfaceTypeElement.getTypeParameters();
 
             if (!typeParameters.isEmpty()) {
+
+                int index = 0;
+
                 for (final TypeParameterElement typeParameter : typeParameters) {
                     final String simpleName = typeParameter.getSimpleName().toString();
-                    final List<? extends TypeMirror> boundsMirrors = typeParameter.getBounds();
-                    final List<TypeName> boundsTypeNames = new ArrayList<>();
-
-                    for (TypeMirror typeMirror : boundsMirrors) {
-                        boundsTypeNames.add(TypeName.get(typeMirror));
-                    }
-
-                    final TypeVariableName typeVariableName = TypeVariableName.get(simpleName).withBounds(boundsTypeNames);
-                    //classBuilder.addTypeVariable(typeVariableName);
+                    parameterTypeMappings.put(simpleName, typeArguments.get(index++));
                 }
             }
+        }
 
+        for (final TypeMirror interfaceTypeMirror : allInterfaces) {
+            final TypeElement interfaceTypeElement = (TypeElement) typeUtils.asElement(interfaceTypeMirror);
 
             for (final Element element : interfaceTypeElement.getEnclosedElements()) {
                 if (element.getKind() == ElementKind.METHOD) {
@@ -322,8 +325,14 @@ public class PlugInterfaceAnnotatedInterface {
             final List<? extends VariableElement> parameterElements = methodElement.getParameters();
 
             for (final VariableElement parameterElement : parameterElements) {
-                final TypeName type = TypeName.get(parameterElement.asType());
-                methodBuilder.addParameter(type, parameterElement.getSimpleName().toString(), Modifier.FINAL);
+                TypeName parameterType = TypeName.get(parameterElement.asType());
+                final String parameterName = parameterElement.getSimpleName().toString();
+                final TypeMirror mappedType = parameterTypeMappings.get(parameterType.toString());
+
+                if (mappedType != null) {
+                    parameterType = ClassName.get((TypeElement)typeUtils.asElement(mappedType));
+                }
+                methodBuilder.addParameter(parameterType, parameterName, Modifier.FINAL);
             }
 
             final JavaWriter writer = new JavaWriter();
