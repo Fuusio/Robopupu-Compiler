@@ -20,6 +20,10 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 ## Installation
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
+
+### 0.5.4
+* Fixed a bug in code generation for PlugInvoker classes caused by static intercace methods supported in Java 8.
+
 ### 0.5.3
 * Added support for using type parameters in interfaces annotated with @PluginInterface.
 
