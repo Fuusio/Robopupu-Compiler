@@ -1,16 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.robopupu.compiler.app"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -23,8 +28,24 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
     compile project(':api')
     apt project(':robopupu-compiler')
+}
+
+String java8 = getJavaVersion(8)
+String java7 = getJavaVersion(7)
+
+retrolambda {
+    jdk java8
+    oldJdk java7
+}
+
+String getJavaVersion(Integer v) {
+    def sout = new StringBuffer()
+    def proc = "/usr/libexec/java_home -v 1.$v".execute()
+    proc.consumeProcessOutput(sout, new StringBuffer())
+    proc.waitForOrKill(1000)
+    return sout.toString().replace("\n", "").replace("\r", "")
 }

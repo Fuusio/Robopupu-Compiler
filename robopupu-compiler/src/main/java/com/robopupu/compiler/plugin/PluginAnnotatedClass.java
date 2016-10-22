@@ -57,10 +57,6 @@ public class PluginAnnotatedClass {
         plugInterfaces.put(interfaceName, annotatedInterface);
     }
 
-    public TypeElement getTypeElement() {
-        return typeElement;
-    }
-
     public void generateCode(final ProcessingEnvironment environment, final Elements elementUtils, final Filer filer) throws IOException {
         generatePlugger(environment, elementUtils, filer);
     }

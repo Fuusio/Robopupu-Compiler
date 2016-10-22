@@ -19,4 +19,7 @@ public interface FooPresenter extends FeaturePresenter {
 
     @OnChecked
     void onRememberChecked(boolean checked);
+
+    static void fooBar() {
+    }
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -113,7 +114,12 @@ public class PlugInterfaceAnnotatedInterface {
         for (final Element element : enclosedElements) {
 
             if (element.getKind() == ElementKind.METHOD) {
-                methodElements.add((ExecutableElement) element);
+                final ExecutableElement methodElement = (ExecutableElement) element;
+                final Set<Modifier> modifiers = methodElement.getModifiers();
+
+                if (!modifiers.contains(Modifier.STATIC)) {
+                    methodElements.add(methodElement);
+                }
             }
         }
 
@@ -129,7 +135,12 @@ public class PlugInterfaceAnnotatedInterface {
             for (final Element element : interfaceTypeElement.getEnclosedElements()) {
 
                 if (element.getKind() == ElementKind.METHOD) {
-                    methodElements.add((ExecutableElement) element);
+                    final ExecutableElement methodElement = (ExecutableElement) element;
+                    final Set<Modifier> modifiers = methodElement.getModifiers();
+
+                    if (!modifiers.contains(Modifier.STATIC)) {
+                        methodElements.add(methodElement);
+                    }
                 }
             }
         }
@@ -405,6 +416,13 @@ public class PlugInterfaceAnnotatedInterface {
     }
 
     private boolean isInvokerMethodCreatedFor(final ExecutableElement methodElement) {
+
+        final Set<Modifier> modifiers = methodElement.getModifiers();
+
+        if (modifiers.contains(Modifier.STATIC)) {
+            return false;
+        }
+
         if (isViewInterface) {
             if (returnsValue(methodElement)) {
                 final String methodName = methodElement.getSimpleName().toString();
@@ -480,9 +498,5 @@ public class PlugInterfaceAnnotatedInterface {
             }
         }
         return false;
-    }
-
-    private boolean typesEqual(final Class<?> type, final TypeMirror typeMirror) {
-        return type.getName().equals(typeMirror.toString());
     }
 }
