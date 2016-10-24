@@ -20,8 +20,8 @@ Robopupu documentation can be found in [Robopupu project website](http://robopup
 ## Installation
 Please follow the installation instructions available in [Robopupu Github repository](https://github.com/Fuusio/Robopupu).
 
-### 0.5.5
-* Updated the version to match Robopupu Android library version 0.5.5
+### 0.5.6
+* Updated the version to match Robopupu Android library version 0.5.6
 
 ### 0.5.4
 * Fixed a bug in code generation for PlugInvoker classes caused by static intercace methods supported in Java 8.
